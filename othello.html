@@ -6,175 +6,419 @@
 <title>Othello — The Globe</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink:#0d0a07; --parchment:#f5edd8; --gold:#c9923a; --gold-light:#e8b96a;
-  --crimson:#7a1c24; --crimson-light:#a02535; --shadow:rgba(0,0,0,.7); --glow:rgba(201,146,58,.4);
-  --panel:#13100c; --panel-border:rgba(201,146,58,.2);
+/* ============================================================
+   DESIGN SYSTEM
+   Hero  = full black, max drama
+   Body  = warm parchment — readable, humanising, ink-on-paper
+   ============================================================ */
+:root{
+  /* Hero (dark) */
+  --ink:#0d0a07;
+  --ink-mid:#1a1410;
+  /* Parchment (light) */
+  --parch-bg:#f0e6cc;
+  --parch-mid:#e8d9b8;
+  --parch-dark:#dccda0;
+  --parch-text:#1e1509;
+  --parch-muted:#5a4a2e;
+  /* Accent */
+  --gold:#b8832e;
+  --gold-light:#d4a85a;
+  --gold-pale:rgba(184,131,46,.15);
+  --crimson:#7a1c24;
+  --crimson-light:#a02535;
+  /* Shared */
+  --shadow:rgba(0,0,0,.7);
+  --glow:rgba(184,131,46,.4);
+  /* Panel colours used in parchment sections */
+  --panel-bg:rgba(255,255,255,.45);
+  --panel-border:rgba(184,131,46,.3);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--ink);color:var(--parchment);font-family:'EB Garamond',serif;min-height:100vh;overflow-x:hidden;}
+body{background:var(--parch-bg);color:var(--parch-text);font-family:'EB Garamond',serif;min-height:100vh;overflow-x:hidden;}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--panel-border);padding:0 40px;}
+/* Parchment texture overlay on body */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.6;
+}
+
+/* ============================================================
+   NAV — sits on parchment once past hero
+   ============================================================ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(13,10,7,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(184,131,46,.25);
+  padding:0 40px;
+}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
-.nav-brand{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.3em;color:var(--gold);text-decoration:none;text-transform:uppercase;}
+.nav-brand{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.3em;color:var(--gold-light);text-decoration:none;text-transform:uppercase;}
 .nav-links{display:flex;gap:4px;list-style:none;}
-.nav-links a{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;color:var(--parchment);text-decoration:none;text-transform:uppercase;opacity:.6;transition:all .3s;padding:6px 12px;border-radius:2px;}
-.nav-links a:hover,.nav-links a.active{opacity:1;color:var(--gold);background:rgba(201,146,58,.1);}
+.nav-links a{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;color:#e8d9b8;text-decoration:none;text-transform:uppercase;opacity:.6;transition:all .3s;padding:6px 12px;border-radius:2px;}
+.nav-links a:hover,.nav-links a.active{opacity:1;color:var(--gold-light);background:rgba(184,131,46,.12);}
 
-/* HERO */
-.hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center top,#2a0d10 0%,#0d0a07 60%);}
-.hero-eyes{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.18;}
-.hero-eyes svg{width:100%;max-width:900px;}
-.hero-content{position:relative;z-index:2;text-align:center;padding:20px;}
-.hero-kicker{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.6em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 1s ease forwards .3s;}
-.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(3rem,9vw,8rem);font-weight:900;line-height:.9;color:var(--parchment);text-shadow:0 0 80px rgba(122,28,36,.8),0 0 30px var(--glow);opacity:0;animation:fadeUp 1s ease forwards .5s;}
-.hero-title span{display:block;font-size:.38em;color:var(--gold);letter-spacing:.5em;font-weight:400;margin-top:8px;}
-.hero-quote{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(1rem,2vw,1.25rem);color:var(--parchment);opacity:0;margin-top:28px;animation:fadeUp 1s ease forwards .9s;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7;}
-.hero-quote cite{display:block;font-style:normal;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);margin-top:8px;}
-.hero-cta{display:flex;gap:16px;justify-content:center;margin-top:36px;opacity:0;animation:fadeUp 1s ease forwards 1.1s;flex-wrap:wrap;}
-.btn{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;padding:14px 28px;text-decoration:none;transition:all .3s;cursor:pointer;border:none;}
-.btn-primary{background:var(--crimson);color:var(--parchment);border:1px solid var(--crimson-light);}
-.btn-primary:hover{background:var(--crimson-light);transform:translateY(-2px);}
-.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);}
-.btn-outline:hover{background:rgba(201,146,58,.1);transform:translateY(-2px);}
-.scroll-indicator{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.4em;color:var(--gold);opacity:.7;text-transform:uppercase;animation:pulse 2s ease-in-out infinite;}
+/* ============================================================
+   HERO — stays BLACK for maximum drama
+   ============================================================ */
+.hero{
+  position:relative;
+  height:100vh;min-height:560px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  background:var(--ink);
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center top,#2d0c10 0%,#120607 45%,#0d0a07 100%);
+}
 
-/* WEEK NAVIGATION BAR */
-.week-nav{position:sticky;top:60px;z-index:150;background:rgba(13,10,7,.97);border-bottom:1px solid var(--panel-border);backdrop-filter:blur(10px);}
+/* ---- The dramatic eyes ---- */
+.hero-eyes{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  /* eyes sit behind title text but are clearly visible */
+  z-index:1;
+}
+.eyes-svg{
+  width:min(90vw,820px);
+  filter:drop-shadow(0 0 60px rgba(122,28,36,.7));
+}
+
+/* Each eye pulses very slowly */
+@keyframes eyePulse{
+  0%,100%{opacity:.85;}
+  50%{opacity:1;}
+}
+.eye-left,.eye-right{animation:eyePulse 4s ease-in-out infinite;}
+.eye-right{animation-delay:0.6s;}
+
+/* Iris glow */
+@keyframes irisGlow{
+  0%,100%{filter:brightness(1);}
+  50%{filter:brightness(1.35) saturate(1.2);}
+}
+.iris{animation:irisGlow 5s ease-in-out infinite;}
+
+/* ---- Title block ---- */
+.hero-content{
+  position:relative;z-index:2;
+  text-align:center;padding:20px;
+  /* We need the title to sit OVER the eye SVG and be readable */
+}
+
+/*
+   THE KEY DESIGN MOMENT:
+   "OthellO" — the two capital O's BECOME the eye sockets.
+   Each O has a glowing iris pupil drawn inside it using
+   a positioned pseudo-element on a wrapper span.
+   The title layout:
+       O  T  H  E  L  L  O
+   ^────────────────────────^
+   left O                right O
+*/
+.hero-title-wrap{
+  position:relative;
+  display:inline-block;
+}
+
+/* Main title text */
+.hero-title{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(3.5rem,12vw,10rem);
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+  color:transparent;               /* text is just an outline */
+  -webkit-text-stroke:2px rgba(245,237,216,.9);
+  text-stroke:2px rgba(245,237,216,.9);
+  text-shadow:
+    0 0 80px rgba(122,28,36,.9),
+    0 0 30px rgba(184,131,46,.3);
+  user-select:none;
+}
+
+/* Glow fills */
+.o-left,.o-right{
+  /* Override the transparent fill for just these characters */
+  color:rgba(245,237,216,.05);
+  -webkit-text-stroke:2.5px rgba(201,146,58,.95);
+  text-stroke:2.5px rgba(201,146,58,.95);
+  text-shadow:
+    0 0 40px rgba(201,146,58,.8),
+    0 0 80px rgba(122,28,36,1),
+    0 0 4px rgba(245,237,216,.6);
+  position:relative;
+}
+
+/* Glowing dot inside each O — the iris/pupil */
+.o-left::after,.o-right::after{
+  content:'';
+  position:absolute;
+  /* Centre within the letter's bounding box */
+  top:50%;left:50%;
+  transform:translate(-50%,-48%);
+  width:0.28em;height:0.28em;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #e8c060 0%, #c9923a 35%, #7a1c24 65%, #1a0608 100%);
+  box-shadow:
+    0 0 0.12em 0.04em rgba(201,146,58,.9),
+    0 0 0.3em 0.1em rgba(122,28,36,.8),
+    inset 0 0 0.06em rgba(255,220,100,.6);
+  animation:irisGlow 4s ease-in-out infinite;
+  pointer-events:none;
+}
+.o-right::after{animation-delay:0.8s;}
+
+.hero-title-sub{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-size:clamp(.55rem,1.5vw,.85rem);
+  letter-spacing:.8em;
+  color:var(--gold-light);
+  text-transform:uppercase;
+  margin-top:14px;
+  opacity:.85;
+  text-shadow:0 0 20px rgba(201,146,58,.4);
+}
+
+.hero-quote{
+  font-family:'EB Garamond',serif;font-style:italic;
+  font-size:clamp(.95rem,2vw,1.2rem);
+  color:#e8d9b8;
+  opacity:0;
+  margin-top:28px;
+  animation:fadeUp 1s ease forwards 1s;
+  max-width:520px;margin-left:auto;margin-right:auto;
+  line-height:1.75;
+  text-shadow:0 1px 8px rgba(0,0,0,.6);
+}
+.hero-quote cite{
+  display:block;font-style:normal;
+  font-family:'Cinzel',serif;font-size:.62rem;
+  letter-spacing:.3em;color:var(--gold-light);margin-top:8px;
+}
+.hero-cta{
+  display:flex;gap:16px;justify-content:center;
+  margin-top:36px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp 1s ease forwards 1.2s;
+}
+
+/* Scroll cue — arrow + text at bottom of hero */
+.scroll-cue{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:fadeUp 1s ease forwards 1.8s;
+  cursor:pointer;
+}
+.scroll-cue-line{
+  width:1px;height:40px;
+  background:linear-gradient(to bottom,transparent,var(--gold-light));
+  animation:scrollLine 2s ease-in-out infinite;
+}
+.scroll-cue-text{
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.4em;
+  color:var(--gold-light);text-transform:uppercase;opacity:.7;
+}
+@keyframes scrollLine{0%,100%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}}
+
+/* ============================================================
+   PARCHMENT TRANSITION — gradient bridge between hero and body
+   ============================================================ */
+.parch-bridge{
+  height:80px;
+  background:linear-gradient(to bottom, var(--ink) 0%, var(--parch-bg) 100%);
+  position:relative;z-index:1;
+}
+
+/* ============================================================
+   WEEK NAV BAR — parchment version
+   ============================================================ */
+.week-nav{
+  position:sticky;top:60px;z-index:150;
+  background:rgba(240,230,204,.97);
+  border-bottom:1px solid var(--panel-border);
+  backdrop-filter:blur(8px);
+  box-shadow:0 2px 16px rgba(184,131,46,.12);
+}
 .week-nav-inner{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;padding:0 20px;}
 .week-nav-inner::-webkit-scrollbar{display:none;}
-.week-tab{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.15em;color:var(--parchment);text-transform:uppercase;padding:16px 18px;border:none;background:none;cursor:pointer;opacity:.5;transition:all .3s;white-space:nowrap;position:relative;flex-shrink:0;}
+.week-tab{
+  font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.15em;
+  color:var(--parch-text);text-transform:uppercase;
+  padding:16px 18px;border:none;background:none;cursor:pointer;
+  opacity:.5;transition:all .3s;white-space:nowrap;position:relative;flex-shrink:0;
+}
 .week-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform .3s;}
 .week-tab:hover{opacity:.8;color:var(--gold);}
 .week-tab.active{opacity:1;color:var(--gold);}
 .week-tab.active::after{transform:scaleX(1);}
 
-/* MAIN CONTENT */
+/* ============================================================
+   MAIN PARCHMENT CONTENT AREA
+   ============================================================ */
 .main{max-width:1100px;margin:0 auto;padding:0 24px;}
 
-/* SECTIONS */
-.course-section{padding:80px 0;border-bottom:1px solid var(--panel-border);}
+/* ---- Section structure ---- */
+.course-section{padding:70px 0;border-bottom:1px solid var(--panel-border);}
 .course-section:last-child{border-bottom:none;}
-.sec-label{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
-.sec-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,3vw,2.2rem);color:var(--parchment);margin-bottom:8px;line-height:1.2;}
-.sec-subtitle{font-family:'EB Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--parchment);opacity:.7;margin-bottom:40px;}
+.sec-label{
+  font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.5em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:10px;
+}
+.sec-title{
+  font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,3vw,2.2rem);
+  color:var(--parch-text);margin-bottom:8px;line-height:1.2;
+}
+.sec-subtitle{
+  font-family:'EB Garamond',serif;font-style:italic;font-size:1.1rem;
+  color:var(--parch-muted);margin-bottom:40px;
+}
 .divider{border:none;border-top:1px solid var(--panel-border);margin:40px 0;}
 
-/* INFO BOX */
+/* ---- Info cards ---- */
 .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:40px;}
-.info-card{background:var(--panel);border:1px solid var(--panel-border);padding:24px;}
+.info-card{background:var(--panel-bg);border:1px solid var(--panel-border);padding:24px;}
 .info-card-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
-.info-card-val{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.5;opacity:.85;}
+.info-card-val{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.5;color:var(--parch-text);opacity:.9;}
 
-/* LG/SC BOX */
+/* ---- LG / SC boxes ---- */
 .lg-sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;}
 @media(max-width:700px){.lg-sc-grid{grid-template-columns:1fr;}}
-.lg-box{background:var(--panel);border:1px solid var(--panel-border);padding:28px;}
+.lg-box{background:var(--panel-bg);border:1px solid var(--panel-border);padding:28px;}
 .lg-box h4{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
 .lg-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.lg-list li{font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.5;opacity:.85;padding-left:20px;position:relative;}
+.lg-list li{font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.5;color:var(--parch-text);opacity:.9;padding-left:20px;position:relative;}
 .lg-list li::before{content:'✦';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:2px;}
 
-/* WEEK SECTIONS */
+/* ---- Week sections ---- */
 .week-section{display:none;padding:60px 0;}
 .week-section.active{display:block;}
 
-/* VIDEO GRID */
+/* ---- Video grid ---- */
 .video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:32px;}
-.video-card{background:var(--panel);border:1px solid var(--panel-border);overflow:hidden;transition:all .3s;}
-.video-card:hover{border-color:var(--gold);transform:translateY(-4px);}
+.video-card{background:var(--panel-bg);border:1px solid var(--panel-border);overflow:hidden;transition:all .3s;}
+.video-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 8px 32px rgba(184,131,46,.15);}
 .video-thumb{position:relative;padding-bottom:56.25%;background:#1a1208;overflow:hidden;}
 .video-thumb iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
-.video-thumb .thumb-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(13,10,7,.6);cursor:pointer;transition:opacity .3s;}
-.video-thumb .thumb-overlay:hover{opacity:0;}
-.play-btn{width:60px;height:60px;border-radius:50%;background:rgba(201,146,58,.9);display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
 .video-info{padding:20px;}
 .video-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
-.video-title{font-family:'EB Garamond',serif;font-size:1.05rem;font-weight:500;margin-bottom:8px;}
-.video-desc{font-family:'EB Garamond',serif;font-size:.88rem;line-height:1.5;opacity:.65;}
+.video-title{font-family:'EB Garamond',serif;font-size:1.05rem;font-weight:500;margin-bottom:8px;color:var(--parch-text);}
+.video-desc{font-family:'EB Garamond',serif;font-size:.88rem;line-height:1.5;color:var(--parch-muted);}
 
-/* DISCUSSION */
-.discussion-box{background:var(--panel);border:1px solid var(--panel-border);padding:36px;margin-top:32px;}
+/* ---- Discussion ---- */
+.discussion-box{background:var(--panel-bg);border:1px solid var(--panel-border);padding:36px;margin-top:32px;}
 .discussion-box h4{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
-.discussion-prompt{font-family:'EB Garamond',serif;font-style:italic;font-size:1.1rem;line-height:1.8;border-left:3px solid var(--gold);padding-left:20px;margin-bottom:24px;opacity:.9;}
+.discussion-prompt{font-family:'EB Garamond',serif;font-style:italic;font-size:1.1rem;line-height:1.8;border-left:3px solid var(--gold);padding-left:20px;margin-bottom:24px;color:var(--parch-text);opacity:.9;}
 .discussion-form{display:flex;flex-direction:column;gap:14px;}
-.discussion-form textarea{background:rgba(201,146,58,.04);border:1px solid var(--panel-border);color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:16px;resize:vertical;min-height:120px;transition:border-color .3s;outline:none;}
+.discussion-form textarea{
+  background:rgba(255,255,255,.6);border:1px solid var(--panel-border);
+  color:var(--parch-text);font-family:'EB Garamond',serif;font-size:1rem;
+  padding:16px;resize:vertical;min-height:120px;transition:border-color .3s;outline:none;
+}
 .discussion-form textarea:focus{border-color:var(--gold);}
-.discussion-form textarea::placeholder{opacity:.4;}
+.discussion-form textarea::placeholder{color:var(--parch-muted);opacity:.6;}
 .form-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
 
-/* ACTIVITY CARDS */
+/* ---- Activity cards ---- */
 .activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:32px;}
-.activity-card{background:var(--panel);border:1px solid var(--panel-border);padding:28px;transition:all .3s;}
-.activity-card:hover{border-color:var(--gold);}
+.activity-card{background:var(--panel-bg);border:1px solid var(--panel-border);padding:28px;transition:all .3s;}
+.activity-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(184,131,46,.1);}
 .act-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;padding:3px 10px;text-transform:uppercase;margin-bottom:14px;}
-.act-badge.formative{color:var(--gold);border:1px solid rgba(201,146,58,.5);}
-.act-badge.summative{color:var(--parchment);background:var(--crimson);}
+.act-badge.formative{color:var(--gold);border:1px solid rgba(184,131,46,.4);}
+.act-badge.summative{color:#f0e6cc;background:var(--crimson);}
 .act-badge.interactive{color:var(--ink);background:var(--gold);}
-.act-title{font-family:'Cinzel',serif;font-size:.9rem;color:var(--parchment);margin-bottom:10px;letter-spacing:.05em;}
-.act-desc{font-family:'EB Garamond',serif;font-size:.9rem;line-height:1.5;opacity:.7;margin-bottom:16px;}
+.act-title{font-family:'Cinzel',serif;font-size:.9rem;color:var(--parch-text);margin-bottom:10px;letter-spacing:.05em;}
+.act-desc{font-family:'EB Garamond',serif;font-size:.9rem;line-height:1.5;color:var(--parch-muted);margin-bottom:16px;}
 
-/* BASTILLE ACTIVITY */
-.bastille-box{background:var(--panel);border:1px solid var(--gold);padding:36px;margin-top:32px;position:relative;overflow:hidden;}
-.bastille-box::before{content:'"';position:absolute;top:-10px;left:20px;font-family:'Cinzel Decorative',serif;font-size:8rem;color:var(--gold);opacity:.08;line-height:1;}
+/* ---- Bastille box ---- */
+.bastille-box{
+  background:linear-gradient(135deg,rgba(184,131,46,.08),rgba(255,255,255,.3));
+  border:1px solid var(--gold);padding:36px;margin-top:32px;position:relative;overflow:hidden;
+}
+.bastille-box::before{content:'"';position:absolute;top:-10px;left:20px;font-family:'Cinzel Decorative',serif;font-size:8rem;color:var(--gold);opacity:.07;line-height:1;}
 .bastille-title{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
-.bastille-song{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--parchment);margin-bottom:8px;}
-.bastille-by{font-family:'EB Garamond',serif;font-style:italic;opacity:.65;margin-bottom:24px;}
-.lyrics-area{background:rgba(13,10,7,.6);border:1px solid var(--panel-border);padding:24px;font-family:'Space Mono',monospace;font-size:.82rem;line-height:2;margin-bottom:24px;max-height:240px;overflow-y:auto;}
-.lyrics-area .highlight{background:rgba(201,146,58,.3);border-radius:2px;padding:0 3px;}
-.lyric-task{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.7;opacity:.85;}
+.bastille-song{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--parch-text);margin-bottom:8px;}
+.bastille-by{font-family:'EB Garamond',serif;font-style:italic;color:var(--parch-muted);margin-bottom:24px;}
+.lyrics-area{
+  background:rgba(255,255,255,.5);border:1px solid var(--panel-border);
+  padding:24px;font-family:'Space Mono',monospace;font-size:.82rem;
+  line-height:2;color:var(--parch-text);margin-bottom:24px;max-height:240px;overflow-y:auto;
+}
+.lyrics-area .highlight{background:rgba(184,131,46,.25);border-radius:2px;padding:0 3px;}
+.lyric-task{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.7;color:var(--parch-text);opacity:.9;}
 
-/* ACT FORMS */
+/* ---- Act form grid ---- */
 .act-form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-top:32px;}
-.act-form-card{background:var(--panel);border:1px solid var(--panel-border);padding:28px;cursor:pointer;transition:all .3s;text-decoration:none;color:inherit;}
-.act-form-card:hover{border-color:var(--gold);transform:translateY(-3px);}
-.act-num{font-family:'Cinzel Decorative',serif;font-size:2.5rem;color:var(--gold);opacity:.4;margin-bottom:8px;line-height:1;}
-.act-form-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--parchment);margin-bottom:10px;letter-spacing:.1em;}
-.act-form-theme{font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;opacity:.65;margin-bottom:16px;}
-.act-question{font-family:'EB Garamond',serif;font-size:.88rem;line-height:1.6;opacity:.8;border-left:2px solid var(--gold);padding-left:14px;}
+.act-form-card{
+  background:var(--panel-bg);border:1px solid var(--panel-border);
+  padding:28px;cursor:pointer;transition:all .3s;text-decoration:none;color:inherit;
+}
+.act-form-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 6px 24px rgba(184,131,46,.15);}
+.act-num{font-family:'Cinzel Decorative',serif;font-size:2.5rem;color:var(--gold);opacity:.35;margin-bottom:8px;line-height:1;}
+.act-form-title{font-family:'Cinzel',serif;font-size:.85rem;color:var(--parch-text);margin-bottom:10px;letter-spacing:.1em;}
+.act-form-theme{font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;color:var(--parch-muted);margin-bottom:16px;}
+.act-question{font-family:'EB Garamond',serif;font-size:.88rem;line-height:1.6;color:var(--parch-text);opacity:.85;border-left:2px solid var(--gold);padding-left:14px;}
 
-/* AI FEATURES */
-.ai-section{background:linear-gradient(135deg,rgba(122,28,36,.15),rgba(13,10,7,0));border:1px solid rgba(122,28,36,.4);padding:40px;margin-top:32px;}
+/* ---- Progress strip ---- */
+.progress-strip{
+  background:rgba(255,255,255,.4);border:1px solid var(--panel-border);
+  padding:20px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+}
+.progress-label{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;}
+.progress-bar{flex:1;min-width:200px;height:4px;background:rgba(184,131,46,.2);border-radius:2px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:2px;transition:width 1s ease;}
+.progress-pct{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);}
+.week-dots{display:flex;gap:8px;}
+.week-dot{width:10px;height:10px;border-radius:50%;background:rgba(184,131,46,.2);border:1px solid var(--panel-border);transition:all .3s;}
+.week-dot.done{background:var(--gold);}
+.week-dot.current{background:var(--crimson);border-color:var(--crimson-light);}
+
+/* ---- AI Section ---- */
+.ai-section{
+  background:rgba(122,28,36,.06);
+  border:1px solid rgba(122,28,36,.25);
+  padding:40px;margin-top:32px;
+}
 .ai-tabs{display:flex;gap:0;margin-bottom:32px;border:1px solid var(--panel-border);}
-.ai-tab{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:14px 24px;background:none;border:none;color:var(--parchment);cursor:pointer;opacity:.5;transition:all .3s;border-right:1px solid var(--panel-border);flex:1;}
+.ai-tab{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:14px 24px;background:none;border:none;color:var(--parch-text);cursor:pointer;opacity:.5;transition:all .3s;border-right:1px solid var(--panel-border);flex:1;}
 .ai-tab:last-child{border-right:none;}
-.ai-tab.active{opacity:1;color:var(--gold);background:rgba(201,146,58,.08);}
+.ai-tab.active{opacity:1;color:var(--gold);background:rgba(184,131,46,.08);}
 .ai-panel{display:none;}
 .ai-panel.active{display:block;}
 
-/* CHAT UI */
-.chat-container{background:var(--panel);border:1px solid var(--panel-border);overflow:hidden;}
-.chat-header{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--panel-border);background:rgba(201,146,58,.04);}
-.chat-avatar{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold);}
-.chat-name{font-family:'Cinzel',serif;font-size:.9rem;color:var(--parchment);letter-spacing:.1em;}
-.chat-status{font-family:'EB Garamond',serif;font-size:.8rem;color:var(--gold);opacity:.8;font-style:italic;}
-.chat-char-select{display:flex;gap:8px;padding:16px 24px;border-bottom:1px solid var(--panel-border);background:rgba(13,10,7,.5);}
-.char-btn{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;padding:8px 16px;background:none;border:1px solid var(--panel-border);color:var(--parchment);cursor:pointer;opacity:.5;transition:all .3s;}
-.char-btn.active{opacity:1;color:var(--gold);border-color:var(--gold);background:rgba(201,146,58,.08);}
+/* ---- Chat UI ---- */
+.chat-container{background:rgba(255,255,255,.5);border:1px solid var(--panel-border);overflow:hidden;}
+.chat-header{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--panel-border);background:rgba(184,131,46,.06);}
+.chat-avatar{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold);background:rgba(255,255,255,.6);}
+.chat-name{font-family:'Cinzel',serif;font-size:.9rem;color:var(--parch-text);letter-spacing:.1em;}
+.chat-status{font-family:'EB Garamond',serif;font-size:.8rem;color:var(--gold);font-style:italic;}
+.chat-char-select{display:flex;gap:8px;padding:16px 24px;border-bottom:1px solid var(--panel-border);background:rgba(255,255,255,.3);}
+.char-btn{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;padding:8px 16px;background:none;border:1px solid var(--panel-border);color:var(--parch-text);cursor:pointer;opacity:.5;transition:all .3s;}
+.char-btn.active{opacity:1;color:var(--gold);border-color:var(--gold);background:rgba(184,131,46,.08);}
 .char-btn:hover{opacity:.8;}
 .chat-messages{height:320px;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--gold) transparent;}
 .message{max-width:80%;display:flex;flex-direction:column;gap:4px;}
 .message.user{align-self:flex-end;align-items:flex-end;}
 .message.ai{align-self:flex-start;}
 .msg-bubble{padding:12px 16px;line-height:1.6;}
-.message.user .msg-bubble{background:var(--crimson);font-family:'EB Garamond',serif;font-size:.95rem;}
-.message.ai .msg-bubble{background:rgba(201,146,58,.1);border:1px solid rgba(201,146,58,.2);font-family:'EB Garamond',serif;font-size:.95rem;font-style:italic;}
-.msg-time{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.1em;opacity:.4;text-transform:uppercase;}
+.message.user .msg-bubble{background:var(--crimson);color:#f0e6cc;font-family:'EB Garamond',serif;font-size:.95rem;}
+.message.ai .msg-bubble{background:rgba(184,131,46,.1);border:1px solid rgba(184,131,46,.25);color:var(--parch-text);font-family:'EB Garamond',serif;font-size:.95rem;font-style:italic;}
+.msg-time{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.1em;opacity:.4;text-transform:uppercase;color:var(--parch-text);}
 .chat-input-area{display:flex;border-top:1px solid var(--panel-border);}
-.chat-input{flex:1;background:none;border:none;color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:16px 20px;outline:none;}
-.chat-input::placeholder{opacity:.3;}
-.chat-send{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:0 24px;background:var(--crimson);border:none;color:var(--parchment);cursor:pointer;transition:background .3s;}
+.chat-input{flex:1;background:rgba(255,255,255,.5);border:none;color:var(--parch-text);font-family:'EB Garamond',serif;font-size:1rem;padding:16px 20px;outline:none;}
+.chat-input::placeholder{opacity:.4;color:var(--parch-muted);}
+.chat-send{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:0 24px;background:var(--crimson);border:none;color:#f0e6cc;cursor:pointer;transition:background .3s;}
 .chat-send:hover{background:var(--crimson-light);}
-.typing{opacity:.6;font-style:italic;font-size:.85rem;}
 
-/* IAGO INSTAGRAM */
-.insta-phone{max-width:380px;margin:0 auto;background:#000;border-radius:40px;padding:20px 12px;border:2px solid #222;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+/* ---- Iago Instagram ---- */
+.insta-phone{max-width:380px;margin:0 auto;background:#000;border-radius:40px;padding:20px 12px;border:2px solid #222;box-shadow:0 20px 60px rgba(0,0,0,.4);}
 .insta-screen{background:#0a0a0a;border-radius:28px;overflow:hidden;}
 .insta-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #1a1a1a;}
-.insta-header svg{width:100px;fill:white;}
 .insta-nav-icons{display:flex;gap:16px;font-size:1.1rem;}
 .insta-profile{padding:20px 16px;}
 .insta-profile-top{display:flex;align-items:center;gap:20px;margin-bottom:16px;}
@@ -202,38 +446,57 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
 .insta-post .post-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:8px 4px 4px;font-size:.55rem;color:#fff;font-family:sans-serif;transform:translateY(100%);transition:transform .3s;}
 .insta-post:hover .post-caption{transform:translateY(0);}
 
-/* ASSESSMENT */
-.assessment-box{background:var(--panel);border:2px solid var(--gold);padding:40px;margin-top:32px;}
-.assessment-title{font-family:'Cinzel Decorative',serif;font-size:1.5rem;color:var(--gold);margin-bottom:8px;}
-.assessment-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:1.05rem;opacity:.8;margin-bottom:28px;}
+/* ---- Assessment ---- */
+.assessment-box{background:var(--panel-bg);border:2px solid var(--gold);padding:40px;margin-top:32px;}
 .rubric-table{width:100%;border-collapse:collapse;margin-bottom:28px;font-family:'EB Garamond',serif;font-size:.9rem;}
-.rubric-table th{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);padding:12px 16px;text-align:left;border-bottom:2px solid var(--gold);background:rgba(201,146,58,.05);}
-.rubric-table td{padding:12px 16px;border-bottom:1px solid var(--panel-border);vertical-align:top;line-height:1.5;opacity:.85;}
-.rubric-table tr:hover td{background:rgba(201,146,58,.03);}
+.rubric-table th{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);padding:12px 16px;text-align:left;border-bottom:2px solid var(--gold);background:rgba(184,131,46,.06);}
+.rubric-table td{padding:12px 16px;border-bottom:1px solid var(--panel-border);vertical-align:top;line-height:1.5;color:var(--parch-text);opacity:.9;}
+.rubric-table tr:hover td{background:rgba(184,131,46,.04);}
 .submit-area{display:flex;flex-direction:column;gap:16px;}
-.submit-note{font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;opacity:.6;}
+.submit-note{font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;color:var(--parch-muted);}
 
-/* PROGRESS */
-.progress-strip{background:rgba(201,146,58,.05);border:1px solid var(--panel-border);padding:20px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
-.progress-label{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;}
-.progress-bar{flex:1;min-width:200px;height:4px;background:rgba(201,146,58,.15);border-radius:2px;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:2px;transition:width 1s ease;}
-.progress-pct{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);}
-.week-dots{display:flex;gap:8px;}
-.week-dot{width:10px;height:10px;border-radius:50%;background:rgba(201,146,58,.2);border:1px solid var(--panel-border);transition:all .3s;}
-.week-dot.done{background:var(--gold);}
-.week-dot.current{background:var(--crimson);border-color:var(--crimson-light);}
+/* ---- Shared input style (parchment) ---- */
+.parch-input{
+  background:rgba(255,255,255,.55);border:1px solid var(--panel-border);
+  color:var(--parch-text);font-family:'EB Garamond',serif;font-size:1rem;
+  padding:14px 16px;outline:none;transition:border-color .3s;width:100%;
+}
+.parch-input:focus{border-color:var(--gold);}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse .8s ease-in-out infinite;}
+/* ---- Buttons ---- */
+.btn{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;padding:14px 28px;text-decoration:none;transition:all .3s;cursor:pointer;border:none;display:inline-block;}
+.btn-primary{background:var(--crimson);color:#f0e6cc;border:1px solid var(--crimson-light);}
+.btn-primary:hover{background:var(--crimson-light);transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);}
+.btn-outline:hover{background:var(--gold-pale);transform:translateY(-2px);}
+
+/* ---- Footer ---- */
+footer{
+  background:var(--ink);
+  border-top:1px solid rgba(184,131,46,.2);
+  padding:40px;text-align:center;
+  font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;
+  color:#e8d9b8;opacity:.4;text-transform:uppercase;
+}
+
+/* ---- Modal ---- */
+#actModal{display:none;position:fixed;inset:0;z-index:500;background:rgba(30,21,9,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+.modal-inner{background:var(--parch-bg);border:1px solid var(--gold);max-width:600px;width:100%;padding:40px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--parch-text);font-size:1.2rem;cursor:pointer;opacity:.5;}
+
+/* Loading dots */
+@keyframes dotPulse{0%,100%{opacity:.3}50%{opacity:1}}
+.loading-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);animation:dotPulse .8s ease-in-out infinite;margin:0 2px;}
 .loading-dot:nth-child(2){animation-delay:.2s;}
 .loading-dot:nth-child(3){animation-delay:.4s;}
 
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
 @media(max-width:768px){
   nav{padding:0 16px;}
-  .ai-tabs .ai-tab{padding:14px 12px;font-size:.55rem;}
+  .ai-tabs .ai-tab{padding:14px 10px;font-size:.55rem;}
+  .hero-title{font-size:clamp(3rem,15vw,6rem);}
 }
 </style>
 </head>
@@ -253,42 +516,98 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ============================================================
+     HERO — full black, maximum drama
+     The two capital O's have glowing irises drawn inside them
+     ============================================================ -->
 <section class="hero" id="top">
   <div class="hero-bg"></div>
-  <!-- Abstract eyes / shadow -->
+
+  <!-- Large background eye shapes -->
   <div class="hero-eyes">
-    <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
-      <!-- Left eye -->
-      <ellipse cx="250" cy="150" rx="200" ry="80" fill="none" stroke="#7a1c24" stroke-width="2"/>
-      <ellipse cx="250" cy="150" rx="90" ry="90" fill="#0d0a07"/>
-      <circle cx="250" cy="150" r="70" fill="#1a0808"/>
-      <circle cx="250" cy="150" r="40" fill="#0d0507"/>
-      <circle cx="265" cy="135" r="10" fill="rgba(201,146,58,0.6)"/>
-      <!-- Right eye -->
-      <ellipse cx="650" cy="150" rx="200" ry="80" fill="none" stroke="#7a1c24" stroke-width="2"/>
-      <ellipse cx="650" cy="150" rx="90" ry="90" fill="#0d0a07"/>
-      <circle cx="650" cy="150" r="70" fill="#1a0808"/>
-      <circle cx="650" cy="150" r="40" fill="#0d0507"/>
-      <circle cx="665" cy="135" r="10" fill="rgba(201,146,58,0.6)"/>
+    <svg class="eyes-svg" viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="irisGrad" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#f0c040"/>
+          <stop offset="25%" stop-color="#c9923a"/>
+          <stop offset="60%" stop-color="#7a1c24"/>
+          <stop offset="100%" stop-color="#0d0507"/>
+        </radialGradient>
+        <radialGradient id="scleraGrad" cx="50%" cy="40%">
+          <stop offset="0%" stop-color="#1e0c0e"/>
+          <stop offset="100%" stop-color="#0d0a07"/>
+        </radialGradient>
+        <filter id="eyeGlow">
+          <feGaussianBlur stdDeviation="8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="irisGlowF">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- LEFT EYE -->
+      <g class="eye-left" filter="url(#eyeGlow)">
+        <!-- Eyelid shape -->
+        <path d="M 40 130 Q 175 40 310 130 Q 175 220 40 130 Z" fill="url(#scleraGrad)" stroke="#7a1c24" stroke-width="1.5"/>
+        <!-- Iris -->
+        <circle cx="175" cy="130" r="52" fill="url(#irisGrad)" class="iris" filter="url(#irisGlowF)"/>
+        <!-- Pupil -->
+        <circle cx="175" cy="130" r="26" fill="#060203"/>
+        <!-- Specular highlight -->
+        <ellipse cx="188" cy="117" rx="10" ry="7" fill="rgba(255,220,100,0.55)" transform="rotate(-20,188,117)"/>
+        <circle cx="161" cy="142" r="3" fill="rgba(255,200,80,0.2)"/>
+        <!-- Eyelash hints top -->
+        <path d="M 90 90 Q 175 50 260 90" fill="none" stroke="#3a1a1a" stroke-width="2.5" opacity="0.6"/>
+      </g>
+
+      <!-- RIGHT EYE -->
+      <g class="eye-right" filter="url(#eyeGlow)">
+        <path d="M 510 130 Q 645 40 780 130 Q 645 220 510 130 Z" fill="url(#scleraGrad)" stroke="#7a1c24" stroke-width="1.5"/>
+        <circle cx="645" cy="130" r="52" fill="url(#irisGrad)" class="iris" filter="url(#irisGlowF)"/>
+        <circle cx="645" cy="130" r="26" fill="#060203"/>
+        <ellipse cx="658" cy="117" rx="10" ry="7" fill="rgba(255,220,100,0.55)" transform="rotate(-20,658,117)"/>
+        <circle cx="631" cy="142" r="3" fill="rgba(255,200,80,0.2)"/>
+        <path d="M 560 90 Q 645 50 730 90" fill="none" stroke="#3a1a1a" stroke-width="2.5" opacity="0.6"/>
+      </g>
     </svg>
   </div>
+
+  <!-- Title + quote -->
   <div class="hero-content">
-    <p class="hero-kicker">Grade 11 · ENG3U · Ontario Curriculum</p>
-    <h1 class="hero-title">OTHELLO<span>by William Shakespeare</span></h1>
+    <p style="font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.6em;color:var(--gold-light);text-transform:uppercase;margin-bottom:24px;opacity:0;animation:fadeUp 1s ease forwards .3s;">Grade 11 · ENG3U · Ontario Curriculum</p>
+
+    <div class="hero-title-wrap" style="opacity:0;animation:fadeUp 1s ease forwards .5s;">
+      <h1 class="hero-title">
+        <span class="o-left">O</span>THELL<span class="o-right">O</span>
+      </h1>
+      <span class="hero-title-sub">by William Shakespeare</span>
+    </div>
+
     <p class="hero-quote">
-      "O, beware, my lord, of jealousy! It is the green-eyed monster which doth mock the meat it feeds on."
+      "O, beware, my lord, of jealousy!<br>It is the green-eyed monster which doth mock the meat it feeds on."
       <cite>— Iago, Act III Scene III</cite>
     </p>
+
     <div class="hero-cta">
       <a href="#weeks" class="btn btn-primary">Begin the Course</a>
       <a href="#ai-features" class="btn btn-outline">Chat with Characters</a>
     </div>
   </div>
-  <p class="scroll-indicator">↓ Scroll to begin ↓</p>
+
+  <div class="scroll-cue" onclick="document.getElementById('weeks').scrollIntoView({behavior:'smooth'})">
+    <div class="scroll-cue-line"></div>
+    <p class="scroll-cue-text">Begin</p>
+  </div>
 </section>
 
-<!-- WEEK NAV BAR -->
+<!-- Bridge from black hero to parchment body -->
+<div class="parch-bridge"></div>
+
+<!-- ============================================================
+     WEEK NAV BAR
+     ============================================================ -->
 <div class="week-nav" id="weeks">
   <div class="week-nav-inner">
     <button class="week-tab active" onclick="showWeek('overview')">Overview</button>
@@ -311,10 +630,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Course Overview</p>
     <h2 class="sec-title">The Big Idea</h2>
     <p class="sec-subtitle">Classic literature isn't locked in the past.</p>
-    <p style="font-family:'EB Garamond',serif;font-size:1.1rem;line-height:1.85;max-width:780px;opacity:.88;margin-bottom:36px;">
+    <p style="font-family:'EB Garamond',serif;font-size:1.1rem;line-height:1.85;max-width:780px;color:var(--parch-text);opacity:.9;margin-bottom:36px;">
       The themes of Othello — manipulation, toxic power dynamics, racism, and sexism — are still happening today. By translating Shakespeare into modern contexts and changing the narrative, we can take away the villain's power and rewrite the tragedy.
     </p>
-
     <div class="progress-strip">
       <span class="progress-label">Your Progress</span>
       <div class="week-dots">
@@ -327,28 +645,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       <span class="progress-pct" id="progressPct">0%</span>
     </div>
-
     <hr class="divider">
-
     <div class="info-grid">
-      <div class="info-card">
-        <p class="info-card-label">Course</p>
-        <p class="info-card-val">ENG3U — Grade 11 English University Preparation</p>
-      </div>
-      <div class="info-card">
-        <p class="info-card-label">Duration</p>
-        <p class="info-card-val">5 Weeks · Self-paced Online Learning</p>
-      </div>
-      <div class="info-card">
-        <p class="info-card-label">Format</p>
-        <p class="info-card-val">MOOC — Massive Open Online Course</p>
-      </div>
-      <div class="info-card">
-        <p class="info-card-label">Final Assessment</p>
-        <p class="info-card-val">Soliloquy Twist Performance Video (2–3 min)</p>
-      </div>
+      <div class="info-card"><p class="info-card-label">Course</p><p class="info-card-val">ENG3U — Grade 11 English University Preparation</p></div>
+      <div class="info-card"><p class="info-card-label">Duration</p><p class="info-card-val">5 Weeks · Self-paced Online Learning</p></div>
+      <div class="info-card"><p class="info-card-label">Format</p><p class="info-card-val">MOOC — Massive Open Online Course</p></div>
+      <div class="info-card"><p class="info-card-label">Final Assessment</p><p class="info-card-val">Soliloquy Twist Performance Video (2–3 min)</p></div>
     </div>
-
     <hr class="divider">
     <p class="sec-label">Learning Goals &amp; Success Criteria</p>
     <div class="lg-sc-grid">
@@ -372,30 +675,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
         </ul>
       </div>
     </div>
-
     <hr class="divider">
     <p class="sec-label">Ontario Curriculum Connections · ENG3U</p>
     <div class="activity-grid">
-      <div class="activity-card">
-        <span class="act-badge formative">Reading 1.5</span>
-        <p class="act-title">Extending Understanding</p>
-        <p class="act-desc">Making rich connections between texts and personal knowledge, experience, and the world — including tracking Iago's lies.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge formative">Reading 1.8</span>
-        <p class="act-title">Perspectives &amp; Bias</p>
-        <p class="act-desc">Identifying and analyzing the perspectives and biases evident in texts, evaluated via the <em>Get Out</em> comparison.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge formative">Oral 2.3</span>
-        <p class="act-title">Oral Communication</p>
-        <p class="act-desc">Communicating orally for a variety of purposes, using language appropriate for the intended audience — evaluated via Soliloquy Twist video.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge formative">Media 3.4</span>
-        <p class="act-title">Producing Media Texts</p>
-        <p class="act-desc">Producing media texts for a variety of purposes and audiences — evaluated via the final interactive digital project.</p>
-      </div>
+      <div class="activity-card"><span class="act-badge formative">Reading 1.5</span><p class="act-title">Extending Understanding</p><p class="act-desc">Making rich connections between texts and personal knowledge, experience, and the world — including tracking Iago's lies.</p></div>
+      <div class="activity-card"><span class="act-badge formative">Reading 1.8</span><p class="act-title">Perspectives &amp; Bias</p><p class="act-desc">Identifying and analyzing the perspectives and biases evident in texts, evaluated via the Get Out comparison.</p></div>
+      <div class="activity-card"><span class="act-badge formative">Oral 2.3</span><p class="act-title">Oral Communication</p><p class="act-desc">Communicating orally for a variety of purposes and audiences — evaluated via the Soliloquy Twist video.</p></div>
+      <div class="activity-card"><span class="act-badge formative">Media 3.4</span><p class="act-title">Producing Media Texts</p><p class="act-desc">Producing media texts for a variety of purposes and audiences — evaluated via the final interactive digital project.</p></div>
     </div>
   </section>
 </div>
@@ -406,57 +692,35 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Week 1</p>
     <h2 class="sec-title">Understanding Context &amp; Themes</h2>
     <p class="sec-subtitle">Who was Shakespeare? What world did Othello live in — and how does it mirror ours?</p>
-
     <div class="activity-grid">
-      <div class="activity-card">
-        <span class="act-badge formative">Reading</span>
-        <p class="act-title">Introduction to Othello</p>
-        <p class="act-desc">Quick, accessible intro to the play. Read the No Fear Shakespeare version linked below, then complete the context check-in.</p>
-        <a href="https://www.sparknotes.com/nofear/shakespeare/othello/" target="_blank" class="btn btn-outline" style="display:inline-block;font-size:.6rem;padding:8px 16px;margin-top:8px;">No Fear Shakespeare →</a>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge formative">Resource</span>
-        <p class="act-title">RSC Learning Zone</p>
-        <p class="act-desc">The Royal Shakespeare Company's full resource hub — characters, stage directions, acting notes, and more.</p>
-        <a href="https://www.rsc.org.uk/shakespeare-learning-zone/othello" target="_blank" class="btn btn-outline" style="display:inline-block;font-size:.6rem;padding:8px 16px;margin-top:8px;">Visit RSC →</a>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge interactive">Creative</span>
-        <p class="act-title">The Three Big Themes</p>
-        <p class="act-desc">Explore this week's three lenses: <strong>Racism &amp; Prejudice</strong>, <strong>Manipulation &amp; Bullying</strong>, and <strong>Sexism &amp; Toxic Masculinity</strong>. Which feels most present today?</p>
-      </div>
+      <div class="activity-card"><span class="act-badge formative">Reading</span><p class="act-title">Introduction to Othello</p><p class="act-desc">Read the No Fear Shakespeare version, then complete the context check-in.</p><a href="https://www.sparknotes.com/nofear/shakespeare/othello/" target="_blank" class="btn btn-outline" style="font-size:.6rem;padding:8px 16px;margin-top:8px;">No Fear Shakespeare →</a></div>
+      <div class="activity-card"><span class="act-badge formative">Resource</span><p class="act-title">RSC Learning Zone</p><p class="act-desc">The Royal Shakespeare Company's full resource hub — characters, stage directions, acting notes, and more.</p><a href="https://www.rsc.org.uk/shakespeare-learning-zone/othello" target="_blank" class="btn btn-outline" style="font-size:.6rem;padding:8px 16px;margin-top:8px;">Visit RSC →</a></div>
+      <div class="activity-card"><span class="act-badge interactive">Creative</span><p class="act-title">The Three Big Themes</p><p class="act-desc">Explore this week's three lenses: <strong>Racism &amp; Prejudice</strong>, <strong>Manipulation &amp; Bullying</strong>, and <strong>Sexism &amp; Toxic Masculinity</strong>.</p></div>
     </div>
-
-    <!-- BASTILLE ACTIVITY -->
     <div class="bastille-box">
       <p class="bastille-title">🎵 Interactive Music Activity · Formative</p>
       <p class="bastille-song">"Send Them Off!"</p>
       <p class="bastille-by">by Bastille — connecting jealousy &amp; Desdemona</p>
       <div style="position:relative;padding-bottom:56.25%;margin-bottom:24px;background:#111;">
-        <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" 
-          src="https://www.youtube.com/embed/4sMsf05yw6I" 
-          title="Send Them Off - Bastille" allowfullscreen></iframe>
+        <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/4sMsf05yw6I" title="Send Them Off - Bastille" allowfullscreen></iframe>
       </div>
-      <div class="lyrics-area" id="lyricsArea">
+      <div class="lyrics-area">
         Exorcise the demons from my head<br>
         Darling, won't you <span class="highlight">help me carry</span> on?<br>
         <span class="highlight">Desdemona, won't you liberate me?</span><br>
         When I'm <span class="highlight">haunted by your ancient history</span><br>
         Every time I try to let you go, oh oh<br>
-        Some <span class="highlight">demon drags me back below</span><br>
-        Oh, I know, I know, I know, I know<br><br>
+        Some <span class="highlight">demon drags me back below</span><br><br>
         <span class="highlight">Can't you see these walls are crumbling?</span><br>
-        My broken mind is stumbling<br>
-        I'm trying to keep up<br>
-        Oh, there is no room for logic when you're <span class="highlight">burning up</span><br><br>
-        Send them off, send them off, send them off...
+        My broken mind is stumbling, I'm trying to keep up<br>
+        Oh, there is no room for logic when you're <span class="highlight">burning up</span>
       </div>
-      <p class="lyric-task"><strong>Your Task (Formative):</strong> Using the discussion box below, identify at least <strong>three lines</strong> from this song that connect to the "green-eyed monster" of jealousy in Othello. How does the song's language mirror what happens between Othello, Iago, and Desdemona? Post your response and reply to a classmate.</p>
+      <p class="lyric-task"><strong>Your Task (Formative):</strong> Identify at least <strong>three lines</strong> that connect to the "green-eyed monster" of jealousy in Othello. Post your response below and reply to a classmate.</p>
       <div class="discussion-form" style="margin-top:20px;">
-        <textarea placeholder="Write your response here — which lines connect to Othello's jealousy and why?"></textarea>
+        <textarea placeholder="Which lines connect to Othello's jealousy, and why?"></textarea>
         <div class="form-row">
-          <button class="btn btn-primary" onclick="submitForm('w1-bastille', this)">Submit Response</button>
-          <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:.85rem;opacity:.5;">Formative — ungraded check-in</span>
+          <button class="btn btn-primary" onclick="submitForm('w1-bastille',this)">Submit Response</button>
+          <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:.85rem;color:var(--parch-muted);">Formative — ungraded check-in</span>
         </div>
       </div>
     </div>
@@ -469,51 +733,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Week 2</p>
     <h2 class="sec-title">Video Analysis &amp; Discussion</h2>
     <p class="sec-subtitle">Othello meets Get Out. The same villain, five centuries apart.</p>
-
     <div class="video-grid">
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/sRfnevzM9kQ" title="Othello - Laurence Fishburne" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Film · 1995</p>
-          <p class="video-title">Othello — Laurence Fishburne</p>
-          <p class="video-desc">Watch Act III Scene III — Iago plants the seed of jealousy. Note the power dynamic and body language.</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/1CTv5nnBFO8" title="Get Out Trailer" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Film · 2017 · Jordan Peele</p>
-          <p class="video-title">Get Out — Official Trailer</p>
-          <p class="video-desc">The "Sunken Place" and the microaggressions at the party. Compare this to Othello's position in Venice.</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/Gij5xNvCYiQ" title="Thug Notes Othello" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Summary · Thug Notes</p>
-          <p class="video-title">Othello — Thug Notes</p>
-          <p class="video-desc">An irreverent but surprisingly insightful summary and analysis of the play. Great recap tool.</p>
-        </div>
-      </div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/sRfnevzM9kQ" title="Othello - Laurence Fishburne" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Film · 1995</p><p class="video-title">Othello — Laurence Fishburne</p><p class="video-desc">Watch Act III Scene III — Iago plants the seed of jealousy. Note the power dynamic and body language.</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/1CTv5nnBFO8" title="Get Out Trailer" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Film · 2017 · Jordan Peele</p><p class="video-title">Get Out — Official Trailer</p><p class="video-desc">The "Sunken Place" and microaggressions at the party. Compare to Othello's position in Venice.</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/Gij5xNvCYiQ" title="Thug Notes Othello" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Summary · Thug Notes</p><p class="video-title">Othello — Thug Notes</p><p class="video-desc">Fast, funny, and surprisingly sharp. Great recap after each act.</p></div></div>
     </div>
-
     <div class="discussion-box">
       <h4>Discussion Forum — Week 2 (Evaluated)</h4>
-      <p class="discussion-prompt">
-        "In Jordan Peele's <em>Get Out</em>, power and control are often disguised as politeness or 'help.' In Othello, Iago destroys Othello by pretending to be his loyal friend. Compare how the villains in <em>Get Out</em> and Othello use psychological manipulation and racial dynamics to control their victims. <strong>Who do you think is the more dangerous type of villain, and why?</strong>"
-      </p>
+      <p class="discussion-prompt">"In Jordan Peele's <em>Get Out</em>, power and control are often disguised as politeness or 'help.' In Othello, Iago destroys Othello by pretending to be his loyal friend. Compare how the villains in <em>Get Out</em> and Othello use psychological manipulation and racial dynamics to control their victims. <strong>Who do you think is the more dangerous type of villain, and why?</strong>"</p>
       <p style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;">📌 Post your response · Then reply to at least two classmates</p>
       <div class="discussion-form">
-        <textarea placeholder="Your discussion post — make a clear argument and support it with specific evidence from both texts..."></textarea>
+        <textarea placeholder="Make a clear argument and support it with specific evidence from both texts..."></textarea>
         <div class="form-row">
-          <button class="btn btn-primary" onclick="submitForm('w2-discuss', this)">Submit Post</button>
-          <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:.85rem;opacity:.5;">Evaluated · See rubric in Assessment tab</span>
+          <button class="btn btn-primary" onclick="submitForm('w2-discuss',this)">Submit Post</button>
+          <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:.85rem;color:var(--parch-muted);">Evaluated · See rubric in Assessment tab</span>
         </div>
       </div>
     </div>
@@ -526,38 +759,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Week 3</p>
     <h2 class="sec-title">Acts I, II &amp; III — The Web of Lies</h2>
     <p class="sec-subtitle">The Director's Cut: your formative check-ins as you read act by act.</p>
-    <p style="font-family:'EB Garamond',serif;font-size:1rem;opacity:.75;margin-bottom:32px;">Read each Act using <a href="https://www.sparknotes.com/nofear/shakespeare/othello/" target="_blank" style="color:var(--gold);">No Fear Shakespeare</a>, then complete the corresponding Director's Cut form below.</p>
-
+    <p style="font-family:'EB Garamond',serif;font-size:1rem;color:var(--parch-muted);margin-bottom:32px;">Read each Act using <a href="https://www.sparknotes.com/nofear/shakespeare/othello/" target="_blank" style="color:var(--gold);">No Fear Shakespeare</a>, then complete the corresponding Director's Cut form below.</p>
     <div class="act-form-grid">
-      <div class="act-form-card">
-        <div class="act-num">I</div>
-        <p class="act-form-title">The Outsider</p>
-        <p class="act-form-theme">Focus: Racism &amp; Prejudice</p>
-        <p class="act-question">"Look at how Brabantio reacts to Othello and Desdemona's marriage. How does this compare to modern prejudices and stereotypes?"</p>
-        <button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(1)">Open Act I Form</button>
-      </div>
-      <div class="act-form-card">
-        <div class="act-num">II</div>
-        <p class="act-form-title">The Setup &amp; Sabotage</p>
-        <p class="act-form-theme">Focus: Reputation &amp; Toxic Friendship</p>
-        <p class="act-question">"How does Iago use peer pressure to ruin Cassio's public image?"</p>
-        <button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(2)">Open Act II Form</button>
-      </div>
-      <div class="act-form-card">
-        <div class="act-num">III</div>
-        <p class="act-form-title">The Web of Lies</p>
-        <p class="act-form-theme">Focus: Gaslighting &amp; "Fake News"</p>
-        <p class="act-question">"Iago never actually says Desdemona is cheating — he just plants the seed of doubt. Why is this type of psychological manipulation so effective?"</p>
-        <button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(3)">Open Act III Form</button>
-      </div>
+      <div class="act-form-card"><div class="act-num">I</div><p class="act-form-title">The Outsider</p><p class="act-form-theme">Focus: Racism &amp; Prejudice</p><p class="act-question">"Look at how Brabantio reacts to Othello and Desdemona's marriage. How does this compare to modern prejudices?"</p><button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(1)">Open Act I Form</button></div>
+      <div class="act-form-card"><div class="act-num">II</div><p class="act-form-title">The Setup &amp; Sabotage</p><p class="act-form-theme">Focus: Reputation &amp; Toxic Friendship</p><p class="act-question">"How does Iago use peer pressure to ruin Cassio's public image?"</p><button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(2)">Open Act II Form</button></div>
+      <div class="act-form-card"><div class="act-num">III</div><p class="act-form-title">The Web of Lies</p><p class="act-form-theme">Focus: Gaslighting &amp; "Fake News"</p><p class="act-question">"Iago never says Desdemona is cheating — he just plants the seed. Why is this type of manipulation so effective?"</p><button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;width:100%;" onclick="openActForm(3)">Open Act III Form</button></div>
     </div>
-
-    <!-- Iago Mind Map -->
     <div class="activity-card" style="margin-top:24px;">
       <span class="act-badge interactive">Interactive · Padlet</span>
       <p class="act-title">Iago's Web of Lies — Mind Map</p>
-      <p class="act-desc">Using Padlet, create a visual mind map of every lie Iago tells and who he tells it to. Draw the connections. How does each lie depend on the ones before it? Share your map in the discussion.</p>
-      <a href="https://padlet.com" target="_blank" class="btn btn-outline" style="display:inline-block;font-size:.6rem;padding:8px 16px;margin-top:12px;">Open Padlet →</a>
+      <p class="act-desc">Create a visual mind map of every lie Iago tells and who he tells it to. Draw the connections. How does each lie depend on the ones before it?</p>
+      <a href="https://padlet.com" target="_blank" class="btn btn-outline" style="font-size:.6rem;padding:8px 16px;margin-top:12px;">Open Padlet →</a>
     </div>
   </section>
 </div>
@@ -568,30 +780,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Week 4</p>
     <h2 class="sec-title">Acts IV &amp; V — The Tragic Fallout</h2>
     <p class="sec-subtitle">Focus: Sexism, Toxic Masculinity, and what could have been different.</p>
-
     <div class="act-form-grid">
-      <div class="act-form-card" style="grid-column:span 2;">
-        <div class="act-num">IV&V</div>
-        <p class="act-form-title">The Tragic Fallout</p>
-        <p class="act-form-theme">Focus: Sexism &amp; Toxic Masculinity</p>
-        <p class="act-question">"Look at how Emilia and Desdemona are treated by their husbands. How do they react differently to toxic masculinity, and what could have been done to stop the tragedy?"</p>
-        <button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;" onclick="openActForm(4)">Open Acts IV &amp; V Form</button>
-      </div>
+      <div class="act-form-card" style="grid-column:span 2;"><div class="act-num">IV&amp;V</div><p class="act-form-title">The Tragic Fallout</p><p class="act-form-theme">Focus: Sexism &amp; Toxic Masculinity</p><p class="act-question">"Look at how Emilia and Desdemona are treated by their husbands. How do they react differently, and what could have stopped the tragedy?"</p><button class="btn btn-outline" style="margin-top:16px;font-size:.6rem;padding:10px 18px;" onclick="openActForm(4)">Open Acts IV &amp; V Form</button></div>
     </div>
-
     <div class="discussion-box" style="margin-top:32px;">
       <h4>Reflection — Desdemona by Toni Morrison</h4>
-      <p class="discussion-prompt">"In Toni Morrison's <em>Desdemona</em>, she gives voice to a character Shakespeare silenced. After watching/reading excerpts, respond: What does Desdemona's story look like when she gets to tell it herself? How does Morrison's version challenge or complete Shakespeare's?"</p>
+      <p class="discussion-prompt">"In Toni Morrison's <em>Desdemona</em>, she gives voice to a character Shakespeare silenced. After watching excerpts, respond: What does Desdemona's story look like when she gets to tell it herself?"</p>
       <div style="position:relative;padding-bottom:56.25%;margin-bottom:24px;background:#111;max-width:600px;">
-        <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
-          src="https://www.youtube.com/embed/fEjC1bGR_Wk"
-          title="Desdemona - Toni Morrison" allowfullscreen></iframe>
+        <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/fEjC1bGR_Wk" title="Desdemona - Toni Morrison" allowfullscreen></iframe>
       </div>
       <div class="discussion-form">
         <textarea placeholder="Your reflection — how does Morrison's Desdemona change the story?"></textarea>
         <div class="form-row">
-          <button class="btn btn-primary" onclick="submitForm('w4-morrison', this)">Submit Reflection</button>
-          <span style="font-family:'EB Garamond',serif;font-style:italic;font-size:.85rem;opacity:.5;">Formative reflection</span>
+          <button class="btn btn-primary" onclick="submitForm('w4-morrison',this)">Submit Reflection</button>
         </div>
       </div>
     </div>
@@ -604,48 +805,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Week 5 · Final Summative</p>
     <h2 class="sec-title">The Soliloquy Twist</h2>
     <p class="sec-subtitle">Take back the narrative. Rewrite the tragedy.</p>
-
     <div class="assessment-box" style="margin-bottom:32px;">
       <p class="sec-label" style="margin-bottom:12px;">The Assignment</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:32px;">
-        <div>
-          <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 1</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;opacity:.85;">Choose one famous soliloquy or monologue from the play — Iago plotting his revenge, Othello in his jealousy, Emilia speaking about how men treat women.</p>
-        </div>
-        <div>
-          <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 2</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;opacity:.85;">Translate the speech entirely into modern language. <em>Slang is encouraged!</em></p>
-        </div>
-        <div>
-          <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 3 — The Twist</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;opacity:.85;">Change the ending so the character makes a <em>different choice</em> — stopping racism, sexism, or bullying in its tracks. What if Othello realized Iago was gaslighting him? What if Emilia stood up earlier?</p>
-        </div>
-        <div>
-          <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 4</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;opacity:.85;">Record a <strong>2–3 minute video</strong> of yourself performing your modern, twisted soliloquy. TikTok-style editing, props, or costumes are welcome!</p>
-        </div>
+        <div><p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 1</p><p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;color:var(--parch-text);opacity:.9;">Choose one famous soliloquy or monologue from the play — Iago plotting his revenge, Othello in his jealousy, Emilia speaking about how men treat women.</p></div>
+        <div><p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 2</p><p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;color:var(--parch-text);opacity:.9;">Translate the speech entirely into modern language. <em>Slang is encouraged!</em></p></div>
+        <div><p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 3 — The Twist</p><p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;color:var(--parch-text);opacity:.9;">Change the ending so the character makes a <em>different choice</em> — stopping racism, sexism, or bullying in its tracks.</p></div>
+        <div><p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Step 4</p><p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;color:var(--parch-text);opacity:.9;">Record a <strong>2–3 minute video</strong> performing your modern, twisted soliloquy. TikTok-style editing, props, and costumes welcome!</p></div>
       </div>
-
       <hr class="divider" style="margin:24px 0;">
       <p class="sec-label" style="margin-bottom:16px;">Rubric</p>
       <table class="rubric-table">
-        <thead>
-          <tr><th>Criterion</th><th>Excellent (4)</th><th>Good (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr>
-        </thead>
+        <thead><tr><th>Criterion</th><th>Excellent (4)</th><th>Good (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Translation</strong> — modern language accuracy</td><td>Elizabethan fully translated; natural modern voice</td><td>Most translated; occasional awkward phrasing</td><td>Partial translation; mix of old/new</td><td>Minimal translation attempted</td></tr>
-          <tr><td><strong>The Twist</strong> — thematic intervention</td><td>Twist clearly addresses racism/sexism/bullying with insight</td><td>Twist addresses a theme; partially developed</td><td>Twist present but underdeveloped</td><td>Little evidence of intentional twist</td></tr>
-          <tr><td><strong>Performance</strong> — oral communication</td><td>Confident, expressive, clear; strong audience awareness</td><td>Mostly clear; some hesitation</td><td>Some clarity; inconsistent delivery</td><td>Difficult to follow</td></tr>
-          <tr><td><strong>Creativity</strong> — media production</td><td>Creative editing, props, or staging enhances meaning</td><td>Some creative choices evident</td><td>Basic recording; limited creative choices</td><td>Minimal production effort</td></tr>
+          <tr><td><strong>Translation</strong></td><td>Fully translated; natural modern voice</td><td>Mostly translated; some awkward phrasing</td><td>Partial; mix of old/new</td><td>Minimal translation</td></tr>
+          <tr><td><strong>The Twist</strong></td><td>Clearly addresses racism/sexism/bullying with insight</td><td>Theme addressed; partially developed</td><td>Twist present but underdeveloped</td><td>Little evidence of twist</td></tr>
+          <tr><td><strong>Performance</strong></td><td>Confident, expressive, clear audience awareness</td><td>Mostly clear; some hesitation</td><td>Inconsistent delivery</td><td>Difficult to follow</td></tr>
+          <tr><td><strong>Creativity</strong></td><td>Editing/props/staging enhances meaning</td><td>Some creative choices evident</td><td>Basic recording</td><td>Minimal production effort</td></tr>
         </tbody>
       </table>
-
       <div class="submit-area">
-        <p class="submit-note">Submit your video link (YouTube, Google Drive, or OneDrive) below. You may also submit a written script as a supporting document.</p>
-        <input type="url" placeholder="Paste your video link here (YouTube, Drive, etc.)" style="background:rgba(201,146,58,.04);border:1px solid var(--panel-border);color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:14px 16px;outline:none;transition:border-color .3s;width:100%;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--panel-border)'">
-        <input type="text" placeholder="Your name" style="background:rgba(201,146,58,.04);border:1px solid var(--panel-border);color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:14px 16px;outline:none;transition:border-color .3s;width:100%;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--panel-border)'">
-        <textarea placeholder="Optional: Paste your written script here" style="background:rgba(201,146,58,.04);border:1px solid var(--panel-border);color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:14px 16px;outline:none;resize:vertical;min-height:100px;width:100%;transition:border-color .3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--panel-border)'"></textarea>
-        <button class="btn btn-primary" style="width:fit-content;" onclick="submitForm('final-soliloquy', this)">Submit Final Assessment</button>
+        <p class="submit-note">Submit your video link (YouTube, Google Drive, or OneDrive) below.</p>
+        <input type="url" class="parch-input" placeholder="Paste your video link here (YouTube, Drive, etc.)">
+        <input type="text" class="parch-input" placeholder="Your name">
+        <textarea class="parch-input" placeholder="Optional: paste your written script here" style="resize:vertical;min-height:100px;"></textarea>
+        <button class="btn btn-primary" style="width:fit-content;" onclick="submitForm('final-soliloquy',this)">Submit Final Assessment</button>
       </div>
     </div>
   </section>
@@ -657,127 +841,66 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Video Resources</p>
     <h2 class="sec-title">The Screening Room</h2>
     <p class="sec-subtitle">Three essential films. One conversation across five centuries.</p>
-
     <div class="video-grid">
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/sRfnevzM9kQ" title="Othello 1995" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Film · 1995</p>
-          <p class="video-title">Othello — Laurence Fishburne &amp; Kenneth Branagh</p>
-          <p class="video-desc">The definitive modern film adaptation. Fishburne's Othello and Branagh's Iago. Watch Act III Scene III for the manipulation masterclass.</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/1CTv5nnBFO8" title="Get Out" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Film · 2017 · Jordan Peele</p>
-          <p class="video-title">Get Out</p>
-          <p class="video-desc">A Black man enters a white social world that appears welcoming — but conceals sinister control. The Sunken Place = the silencing of Othello?</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/fEjC1bGR_Wk" title="Desdemona - Toni Morrison" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Theatre · Toni Morrison</p>
-          <p class="video-title">Desdemona</p>
-          <p class="video-desc">Nobel laureate Toni Morrison gives Desdemona her voice back. A radical retelling that centers the women Shakespeare silenced.</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/Gij5xNvCYiQ" title="Thug Notes" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Summary · Bonus</p>
-          <p class="video-title">Othello — Thug Notes</p>
-          <p class="video-desc">Fast, funny, and surprisingly sharp summary + analysis. Great for a recap after each act.</p>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/4sMsf05yw6I" title="Bastille Send Them Off" allowfullscreen></iframe>
-        </div>
-        <div class="video-info">
-          <p class="video-label">Music · Week 1 Activity</p>
-          <p class="video-title">Bastille — "Send Them Off!"</p>
-          <p class="video-desc">The green-eyed monster of jealousy in song form. Used in the Week 1 interactive activity.</p>
-        </div>
-      </div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/sRfnevzM9kQ" title="Othello 1995" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Film · 1995</p><p class="video-title">Othello — Laurence Fishburne &amp; Kenneth Branagh</p><p class="video-desc">The definitive modern adaptation. Watch Act III Scene III for the manipulation masterclass.</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/1CTv5nnBFO8" title="Get Out" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Film · 2017 · Jordan Peele</p><p class="video-title">Get Out</p><p class="video-desc">A Black man enters a white social world that conceals sinister control. The Sunken Place = the silencing of Othello?</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/fEjC1bGR_Wk" title="Desdemona" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Theatre · Toni Morrison</p><p class="video-title">Desdemona</p><p class="video-desc">Toni Morrison gives Desdemona her voice back. A radical retelling that centres the women Shakespeare silenced.</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/Gij5xNvCYiQ" title="Thug Notes" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Summary · Bonus</p><p class="video-title">Othello — Thug Notes</p><p class="video-desc">Fast, funny, surprisingly sharp summary + analysis.</p></div></div>
+      <div class="video-card"><div class="video-thumb"><iframe src="https://www.youtube.com/embed/4sMsf05yw6I" title="Bastille" allowfullscreen></iframe></div><div class="video-info"><p class="video-label">Music · Week 1 Activity</p><p class="video-title">Bastille — "Send Them Off!"</p><p class="video-desc">The green-eyed monster of jealousy in song form.</p></div></div>
     </div>
   </section>
 </div>
 
-<!-- ===== AI FEATURES ===== -->
+<!-- ===== AI TOOLS ===== -->
 <div class="week-section" id="sec-ai">
   <section class="course-section" id="ai-features">
     <p class="sec-label">AI-Powered Tools</p>
     <h2 class="sec-title">Step Inside the Play</h2>
     <p class="sec-subtitle">Talk to the characters. Explore their world. Break the fourth wall.</p>
-
     <div class="ai-section">
       <div class="ai-tabs">
-        <button class="ai-tab active" onclick="switchAI('chat')">💬 Text a Character</button>
-        <button class="ai-tab" onclick="switchAI('insta')">📸 Iago's Instagram</button>
-        <button class="ai-tab" onclick="switchAI('translator')">📜 Slang Translator</button>
+        <button class="ai-tab active" onclick="switchAI('chat',event)">💬 Text a Character</button>
+        <button class="ai-tab" onclick="switchAI('insta',event)">📸 Iago's Instagram</button>
+        <button class="ai-tab" onclick="switchAI('translator',event)">📜 Slang Translator</button>
       </div>
 
-      <!-- CHAT PANEL -->
+      <!-- CHAT -->
       <div class="ai-panel active" id="ai-chat">
-        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;opacity:.75;margin-bottom:24px;">Send a message to Othello, Iago, Desdemona, or Emilia — they'll respond in character, in modern English, drawing on what Shakespeare tells us about them.</p>
+        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--parch-muted);margin-bottom:24px;">Send a message to Othello, Iago, Desdemona, or Emilia — they'll respond in character, in modern English.</p>
         <div class="chat-container">
           <div class="chat-header">
             <div class="chat-avatar" id="chatAvatar">I</div>
-            <div>
-              <p class="chat-name" id="chatName">Iago</p>
-              <p class="chat-status" id="chatStatus">Online — "I am not what I am."</p>
-            </div>
+            <div><p class="chat-name" id="chatName">Iago</p><p class="chat-status" id="chatStatus">"I am not what I am."</p></div>
           </div>
           <div class="chat-char-select">
-            <button class="char-btn active" onclick="selectChar('iago')">Iago</button>
-            <button class="char-btn" onclick="selectChar('othello')">Othello</button>
-            <button class="char-btn" onclick="selectChar('desdemona')">Desdemona</button>
-            <button class="char-btn" onclick="selectChar('emilia')">Emilia</button>
+            <button class="char-btn active" onclick="selectChar('iago',event)">Iago</button>
+            <button class="char-btn" onclick="selectChar('othello',event)">Othello</button>
+            <button class="char-btn" onclick="selectChar('desdemona',event)">Desdemona</button>
+            <button class="char-btn" onclick="selectChar('emilia',event)">Emilia</button>
           </div>
           <div class="chat-messages" id="chatMessages">
-            <div class="message ai">
-              <div class="msg-bubble">Ah. A curious visitor. I like that. What do you want to know? Choose your words carefully — I'm very good at using them against people. 😈</div>
-              <span class="msg-time">Iago · just now</span>
-            </div>
+            <div class="message ai"><div class="msg-bubble">Ah. A curious visitor. I like that. What do you want to know? Choose your words carefully — I'm very good at using them against people. 😈</div><span class="msg-time">Iago · just now</span></div>
           </div>
           <div class="chat-input-area">
             <input type="text" class="chat-input" id="chatInput" placeholder="Ask Iago something..." onkeydown="if(event.key==='Enter')sendChat()">
             <button class="chat-send" onclick="sendChat()">Send →</button>
           </div>
         </div>
-        <p style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;color:var(--gold);opacity:.6;text-transform:uppercase;margin-top:12px;">⚠️ AI-powered — responses generated by Claude AI. Characters stay true to the play but speak in modern English.</p>
+        <p style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;color:var(--gold);opacity:.6;text-transform:uppercase;margin-top:12px;">⚠️ AI-powered — responses generated by Claude AI. Characters speak in modern English, true to the play.</p>
       </div>
 
-      <!-- IAGO INSTAGRAM PANEL -->
+      <!-- INSTAGRAM -->
       <div class="ai-panel" id="ai-insta">
-        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;opacity:.75;margin-bottom:24px;">What if Iago had Instagram? Explore his "public face" — the manipulative persona he projects to the world, completely at odds with his private scheming.</p>
+        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--parch-muted);margin-bottom:24px;">What if Iago had Instagram? Explore his "public face" — the honest persona he projects, completely at odds with his private scheming.</p>
         <div class="insta-phone">
           <div class="insta-screen">
-            <!-- Insta Header -->
             <div class="insta-header">
-              <svg viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" style="width:100px;fill:white;">
-                <text x="0" y="30" font-family="serif" font-style="italic" font-size="28" fill="white">Instagram</text>
-              </svg>
-              <div class="insta-nav-icons">
-                <span>♡</span><span>✉️</span>
-              </div>
+              <svg viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" style="width:100px;"><text x="0" y="30" font-family="serif" font-style="italic" font-size="28" fill="white">Instagram</text></svg>
+              <div class="insta-nav-icons"><span>♡</span><span>✉️</span></div>
             </div>
-            <!-- Profile -->
             <div class="insta-profile">
               <div class="insta-profile-top">
-                <div class="insta-avatar">
-                  <div class="insta-avatar-inner">😈</div>
-                </div>
+                <div class="insta-avatar"><div class="insta-avatar-inner">😈</div></div>
                 <div class="insta-stats">
                   <div class="insta-stat"><div class="insta-stat-num">47</div><div class="insta-stat-label">posts</div></div>
                   <div class="insta-stat"><div class="insta-stat-num">1.2K</div><div class="insta-stat-label">followers</div></div>
@@ -785,81 +908,43 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
                 </div>
               </div>
               <div class="insta-name">iago.veniceofficial</div>
-              <div class="insta-bio">
-                Honest guy 🙏 | Just vibing in Venice 🇮🇹<br>
-                Loyal AF to my boy Othello 💯<br>
-                Cassio is my homie (not) 😤<br>
-                <span class="hashtag">#Venice #JusticeForMe #TotallyNotEvil</span>
-              </div>
-              <div class="insta-follow-row">
-                <button class="insta-btn follow">Follow</button>
-                <button class="insta-btn message">Message</button>
-              </div>
-
-              <!-- Stories -->
+              <div class="insta-bio">Honest guy 🙏 | Just vibing in Venice 🇮🇹<br>Loyal AF to my boy Othello 💯<br><span class="hashtag">#Venice #JusticeForMe #TotallyNotEvil</span></div>
+              <div class="insta-follow-row"><button class="insta-btn follow">Follow</button><button class="insta-btn message">Message</button></div>
               <div class="insta-stories">
-                <div class="insta-story">
-                  <div class="story-ring"><div class="story-inner">😇</div></div>
-                  <div class="story-label">honest guy</div>
-                </div>
-                <div class="insta-story">
-                  <div class="story-ring"><div class="story-inner">🏛️</div></div>
-                  <div class="story-label">Venice vibes</div>
-                </div>
-                <div class="insta-story">
-                  <div class="story-ring"><div class="story-inner">👁️</div></div>
-                  <div class="story-label">watching...</div>
-                </div>
-                <div class="insta-story">
-                  <div class="story-ring"><div class="story-inner">🍷</div></div>
-                  <div class="story-label">party night</div>
-                </div>
+                <div class="insta-story"><div class="story-ring"><div class="story-inner">😇</div></div><div class="story-label">honest guy</div></div>
+                <div class="insta-story"><div class="story-ring"><div class="story-inner">🏛️</div></div><div class="story-label">Venice vibes</div></div>
+                <div class="insta-story"><div class="story-ring"><div class="story-inner">👁️</div></div><div class="story-label">watching...</div></div>
+                <div class="insta-story"><div class="story-ring"><div class="story-inner">🍷</div></div><div class="story-label">party night</div></div>
               </div>
-
-              <!-- Posts Grid -->
               <div class="insta-posts">
-                <div class="insta-post" title="Just chilling with Cassio before I completely destroy his reputation lol">
-                  🤝<div class="post-caption">Me and Cass 💪 brotherhood</div>
-                </div>
-                <div class="insta-post" title="Out here being totally honest like always">
-                  😇<div class="post-caption">Honesty is my brand 🙏</div>
-                </div>
-                <div class="insta-post" title="The handkerchief was just lying there...">
-                  🌹<div class="post-caption">Found this cute thing 🤭</div>
-                </div>
-                <div class="insta-post" title="Protecting my boy Othello from...himself, basically">
-                  🛡️<div class="post-caption">Always got your back General 💯</div>
-                </div>
-                <div class="insta-post" title="Nothing to see here. Just a normal evening of absolutely no scheming">
-                  🕯️<div class="post-caption">Late night thoughts 🤔</div>
-                </div>
-                <div class="insta-post" title="Watching. Waiting. Planning.">
-                  👁️<div class="post-caption">Venice at night 😌</div>
-                </div>
+                <div class="insta-post">🤝<div class="post-caption">Me and Cass 💪 brotherhood</div></div>
+                <div class="insta-post">😇<div class="post-caption">Honesty is my brand 🙏</div></div>
+                <div class="insta-post">🌹<div class="post-caption">Found this cute thing 🤭</div></div>
+                <div class="insta-post">🛡️<div class="post-caption">Always got your back General 💯</div></div>
+                <div class="insta-post">🕯️<div class="post-caption">Late night thoughts 🤔</div></div>
+                <div class="insta-post">👁️<div class="post-caption">Venice at night 😌</div></div>
               </div>
             </div>
           </div>
         </div>
-        <div style="margin-top:24px;">
+        <div style="margin-top:24px;max-width:600px;">
           <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Classroom Activity</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.7;opacity:.85;max-width:600px;">Iago's Instagram is all about his <em>public persona</em> — the "honest Iago" mask he shows the world. <strong>Your task:</strong> Write 3 Instagram captions Iago might post that seem friendly on the surface but actually hint at his scheming underneath. Post them in the Week 3 discussion.</p>
+          <p style="font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.7;color:var(--parch-text);opacity:.9;">Iago's Instagram is all about his <em>public persona</em> — the "honest Iago" mask he shows the world. <strong>Your task:</strong> Write 3 Instagram captions Iago might post that seem friendly on the surface but hint at his scheming underneath. Post them in the Week 3 discussion.</p>
         </div>
       </div>
 
-      <!-- SLANG TRANSLATOR PANEL -->
+      <!-- SLANG TRANSLATOR -->
       <div class="ai-panel" id="ai-translator">
-        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;opacity:.75;margin-bottom:24px;">Paste any Shakespearean line from Othello and get a modern-slang translation — with notes on what's being said beneath the surface. Practice for your Soliloquy Twist!</p>
+        <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--parch-muted);margin-bottom:24px;">Paste any Shakespearean line from Othello and get a modern-slang translation. Practice for your Soliloquy Twist!</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
           <div>
             <p style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Original Shakespeare</p>
-            <textarea id="shakeInput" placeholder="Paste a line or passage from Othello here..." style="width:100%;background:rgba(201,146,58,.04);border:1px solid var(--panel-border);color:var(--parchment);font-family:'EB Garamond',serif;font-size:1rem;padding:16px;resize:vertical;min-height:180px;outline:none;transition:border-color .3s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--panel-border)'"></textarea>
+            <textarea id="shakeInput" placeholder="Paste a line or passage from Othello here..." class="parch-input" style="resize:vertical;min-height:180px;display:block;"></textarea>
             <button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="translateShakespeare()">Translate to Modern Slang →</button>
           </div>
           <div>
             <p style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Modern Translation</p>
-            <div id="translateOutput" style="width:100%;background:rgba(201,146,58,.04);border:1px solid var(--panel-border);font-family:'EB Garamond',serif;font-size:1rem;padding:16px;min-height:180px;line-height:1.7;opacity:.85;">
-              Your translation will appear here...
-            </div>
+            <div id="translateOutput" style="background:rgba(255,255,255,.5);border:1px solid var(--panel-border);font-family:'EB Garamond',serif;font-size:1rem;padding:16px;min-height:180px;line-height:1.7;color:var(--parch-text);opacity:.85;">Your translation will appear here...</div>
           </div>
         </div>
       </div>
@@ -873,54 +958,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
     <p class="sec-label">Assessment Overview</p>
     <h2 class="sec-title">How You'll Be Evaluated</h2>
     <p class="sec-subtitle">A mix of formative check-ins and a summative final performance.</p>
-
     <div class="activity-grid">
-      <div class="activity-card">
-        <span class="act-badge formative">Formative</span>
-        <p class="act-title">Week 1 — Bastille Activity</p>
-        <p class="act-desc">Connect song lyrics to the theme of jealousy. Ungraded check-in with peer discussion.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge summative">Evaluated</span>
-        <p class="act-title">Week 2 — Discussion Forum</p>
-        <p class="act-desc">Compare <em>Get Out</em> and Othello's villains. Must post + reply to two classmates. See rubric in Week 5.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge formative">Formative</span>
-        <p class="act-title">Weeks 3–4 — Director's Cut Forms</p>
-        <p class="act-desc">Four Google Form check-ins (Acts I–V) tracking comprehension and critical thinking.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge interactive">Interactive</span>
-        <p class="act-title">Weeks 3–4 — Padlet Mind Map</p>
-        <p class="act-desc">Visual map of Iago's lies and their connections. Collaborative or individual.</p>
-      </div>
-      <div class="activity-card">
-        <span class="act-badge summative">SUMMATIVE</span>
-        <p class="act-title">Week 5 — Soliloquy Twist Video</p>
-        <p class="act-desc">2–3 minute performance video. Modern translation + subversive twist. Rubric in Week 5 tab.</p>
-      </div>
+      <div class="activity-card"><span class="act-badge formative">Formative</span><p class="act-title">Week 1 — Bastille Activity</p><p class="act-desc">Connect song lyrics to the theme of jealousy. Ungraded check-in with peer discussion.</p></div>
+      <div class="activity-card"><span class="act-badge summative">Evaluated</span><p class="act-title">Week 2 — Discussion Forum</p><p class="act-desc">Compare Get Out and Othello's villains. Post + reply to two classmates.</p></div>
+      <div class="activity-card"><span class="act-badge formative">Formative</span><p class="act-title">Weeks 3–4 — Director's Cut Forms</p><p class="act-desc">Four check-ins (Acts I–V) tracking comprehension and critical thinking.</p></div>
+      <div class="activity-card"><span class="act-badge interactive">Interactive</span><p class="act-title">Weeks 3–4 — Padlet Mind Map</p><p class="act-desc">Visual map of Iago's lies and their connections.</p></div>
+      <div class="activity-card"><span class="act-badge summative">SUMMATIVE</span><p class="act-title">Week 5 — Soliloquy Twist Video</p><p class="act-desc">2–3 minute performance video. Modern translation + subversive twist. See rubric in Week 5 tab.</p></div>
     </div>
-
-    <div style="margin-top:32px;background:var(--panel);border:1px solid var(--panel-border);padding:32px;">
+    <div style="margin-top:32px;background:var(--panel-bg);border:1px solid var(--panel-border);padding:32px;">
       <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;">Curriculum Expectations Addressed</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
-        <div style="border-left:2px solid var(--gold);padding-left:16px;">
-          <p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Reading 1.5</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.85rem;opacity:.75;line-height:1.5;">Extend understanding by making rich connections between texts and the world</p>
-        </div>
-        <div style="border-left:2px solid var(--gold);padding-left:16px;">
-          <p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Reading 1.8</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.85rem;opacity:.75;line-height:1.5;">Identify and analyze perspectives and biases evident in texts</p>
-        </div>
-        <div style="border-left:2px solid var(--gold);padding-left:16px;">
-          <p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Oral 2.3</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.85rem;opacity:.75;line-height:1.5;">Communicate orally for a variety of purposes and audiences</p>
-        </div>
-        <div style="border-left:2px solid var(--gold);padding-left:16px;">
-          <p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Media 3.4</p>
-          <p style="font-family:'EB Garamond',serif;font-size:.85rem;opacity:.75;line-height:1.5;">Produce media texts for a variety of purposes and audiences</p>
-        </div>
+        <div style="border-left:2px solid var(--gold);padding-left:16px;"><p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Reading 1.5</p><p style="font-family:'EB Garamond',serif;font-size:.85rem;color:var(--parch-muted);line-height:1.5;">Extend understanding by making rich connections between texts and the world</p></div>
+        <div style="border-left:2px solid var(--gold);padding-left:16px;"><p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Reading 1.8</p><p style="font-family:'EB Garamond',serif;font-size:.85rem;color:var(--parch-muted);line-height:1.5;">Identify and analyze perspectives and biases evident in texts</p></div>
+        <div style="border-left:2px solid var(--gold);padding-left:16px;"><p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Oral 2.3</p><p style="font-family:'EB Garamond',serif;font-size:.85rem;color:var(--parch-muted);line-height:1.5;">Communicate orally for a variety of purposes and audiences</p></div>
+        <div style="border-left:2px solid var(--gold);padding-left:16px;"><p style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);margin-bottom:4px;">Media 3.4</p><p style="font-family:'EB Garamond',serif;font-size:.85rem;color:var(--parch-muted);line-height:1.5;">Produce media texts for a variety of purposes and audiences</p></div>
       </div>
     </div>
   </section>
@@ -928,258 +979,150 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,10,7,.95)
 
 </div><!-- /main -->
 
-<footer style="position:relative;z-index:1;border-top:1px solid var(--panel-border);padding:40px;text-align:center;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--parchment);opacity:.4;text-transform:uppercase;">
-  The Globe · Othello · Ontario Curriculum ENG3U · Teachers College
-</footer>
+<footer>The Globe · Othello · Ontario Curriculum ENG3U · Teachers College</footer>
 
 <!-- ACT FORM MODAL -->
-<div id="actModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#13100c;border:1px solid var(--gold);max-width:600px;width:100%;padding:40px;position:relative;max-height:90vh;overflow-y:auto;">
-    <button onclick="closeActForm()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--parchment);font-size:1.2rem;cursor:pointer;opacity:.6;">✕</button>
+<div id="actModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(30,21,9,.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
+  <div class="modal-inner">
+    <button onclick="closeActForm()" class="modal-close">✕</button>
     <div id="actModalContent"></div>
   </div>
 </div>
 
 <script>
-// ---- WEEK NAVIGATION ----
-const weekSections = {
-  'overview':'sec-overview','w1':'sec-w1','w2':'sec-w2','w3':'sec-w3',
-  'w4':'sec-w4','w5':'sec-w5','videos':'sec-videos','ai':'sec-ai','assess':'sec-assess'
-};
-const completedWeeks = new Set();
+/* ---- WEEK NAVIGATION ---- */
+const weekMap={'overview':'sec-overview','w1':'sec-w1','w2':'sec-w2','w3':'sec-w3','w4':'sec-w4','w5':'sec-w5','videos':'sec-videos','ai':'sec-ai','assess':'sec-assess'};
+const weekKeys=Object.keys(weekMap);
+const completedItems=new Set();
 
-function showWeek(id) {
+function showWeek(id){
   document.querySelectorAll('.week-section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById(weekSections[id]);
-  if(sec) sec.classList.add('active');
+  const sec=document.getElementById(weekMap[id]);
+  if(sec)sec.classList.add('active');
   document.querySelectorAll('.week-tab').forEach((t,i)=>{
     t.classList.remove('active');
-    const ids = Object.keys(weekSections);
-    if(ids[i]===id) t.classList.add('active');
+    if(weekKeys[i]===id)t.classList.add('active');
   });
   window.scrollTo({top:document.querySelector('.week-nav').offsetTop-60,behavior:'smooth'});
 }
 
-// ---- AI TABS ----
-function switchAI(panel) {
+/* ---- AI TABS ---- */
+function switchAI(panel,e){
   document.querySelectorAll('.ai-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ai-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('ai-'+panel).classList.add('active');
-  event.target.classList.add('active');
+  if(e&&e.target)e.target.classList.add('active');
 }
 
-// ---- CHAR SELECTION ----
-const chars = {
-  iago: {
-    name:'Iago',avatar:'I',status:'"I am not what I am."',
-    system:`You are Iago from Shakespeare's Othello. You speak in modern, contemporary English — casual, sharp, witty, and dangerously charming. You are brilliant, manipulative, and deeply cynical. You never admit to being evil outright, but you're knowing about it in a self-aware way. You love wordplay and double meanings. You speak as if talking to someone you're sizing up. Keep responses to 3-5 sentences. Stay in character. Do not break the fourth wall to say you're an AI.`
-  },
-  othello: {
-    name:'Othello',avatar:'O',status:'"I am not what I am." — but I am.',
-    system:`You are Othello from Shakespeare's play. You speak in modern English — noble, direct, proud but increasingly uncertain of yourself as Iago's manipulation takes hold. You are a great military leader who feels like an outsider in Venetian society. You speak with genuine emotion and dignity. Keep responses to 3-5 sentences. Stay in character.`
-  },
-  desdemona: {
-    name:'Desdemona',avatar:'D',status:'Loyal. Silenced. Speaking now.',
-    system:`You are Desdemona from Shakespeare's Othello, but in Toni Morrison's spirit — you have your own voice now. You speak in modern English. You are intelligent, loving, but not naive — you can see the systems working against you even if you struggle against them. You speak with clarity and warmth. Keep responses to 3-5 sentences. Stay in character.`
-  },
-  emilia: {
-    name:'Emilia',avatar:'E',status:'"The world\'s a huge thing."',
-    system:`You are Emilia from Shakespeare's Othello. You speak in modern, blunt, sardonic English. You've seen everything. You know men's games. You're sharp, funny, and deeply frustrated with a world that undervalues women. You are loyal but you have your limits. You speak truth to power. Keep responses to 3-5 sentences. Stay in character.`
-  }
+/* ---- CHARACTER CHAT ---- */
+const chars={
+  iago:{name:'Iago',avatar:'I',status:'"I am not what I am."',
+    system:`You are Iago from Shakespeare's Othello. Speak in modern, contemporary English — casual, sharp, witty, dangerously charming. You are brilliant, manipulative, self-aware about your own villainy in a sardonic way. You love wordplay and double meanings. Keep responses to 3-5 sentences. Stay in character.`},
+  othello:{name:'Othello',avatar:'O',status:'General. Husband. Outsider.',
+    system:`You are Othello from Shakespeare's play. Speak in modern English — noble, direct, proud but increasingly uncertain as Iago's manipulation takes hold. You are a great military leader who feels like an outsider in Venetian society. Speak with genuine emotion and dignity. Keep responses to 3-5 sentences. Stay in character.`},
+  desdemona:{name:'Desdemona',avatar:'D',status:'Loyal. Silenced. Speaking now.',
+    system:`You are Desdemona from Shakespeare's Othello, but you have your own voice now — in the spirit of Toni Morrison's retelling. Speak in modern English. You are intelligent, loving, but not naive — you can see the systems working against you. Speak with clarity and warmth. Keep responses to 3-5 sentences. Stay in character.`},
+  emilia:{name:'Emilia',avatar:'E',status:'"The world\'s a huge thing."',
+    system:`You are Emilia from Shakespeare's Othello. Speak in modern, blunt, sardonic English. You've seen everything. You know men's games. You're sharp, funny, deeply frustrated. You speak truth to power. Keep responses to 3-5 sentences. Stay in character.`}
 };
+let currentChar='iago';
+const chatHistory=[];
 
-let currentChar = 'iago';
-const chatHistory = [];
-
-function selectChar(c) {
-  currentChar = c;
-  const ch = chars[c];
-  document.getElementById('chatAvatar').textContent = ch.avatar;
-  document.getElementById('chatName').textContent = ch.name;
-  document.getElementById('chatStatus').textContent = ch.status;
-  document.getElementById('chatInput').placeholder = `Ask ${ch.name} something...`;
+function selectChar(c,e){
+  currentChar=c;
+  const ch=chars[c];
+  document.getElementById('chatAvatar').textContent=ch.avatar;
+  document.getElementById('chatName').textContent=ch.name;
+  document.getElementById('chatStatus').textContent=ch.status;
+  document.getElementById('chatInput').placeholder=`Ask ${ch.name} something...`;
   document.querySelectorAll('.char-btn').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-  const msgs = document.getElementById('chatMessages');
-  msgs.innerHTML = `<div class="message ai"><div class="msg-bubble">${getOpeningLine(c)}</div><span class="msg-time">${ch.name} · just now</span></div>`;
-  chatHistory.length = 0;
+  if(e&&e.target)e.target.classList.add('active');
+  const openings={iago:"Ah. A curious visitor. I like that. What do you want to know? Choose your words carefully — I'm very good at using them against people. 😈",othello:"Come in, friend. I have time for questions, though my mind has not been entirely my own lately. What troubles you?",desdemona:"Hello. I'm glad someone's finally asking me what I think. Most people around here just talk *about* me. What would you like to know?",emilia:"You want to talk? Fine. But I'm not sugarcoating anything. I've had enough of that. What do you want to know?"};
+  document.getElementById('chatMessages').innerHTML=`<div class="message ai"><div class="msg-bubble">${openings[c]}</div><span class="msg-time">${ch.name} · just now</span></div>`;
+  chatHistory.length=0;
 }
 
-function getOpeningLine(c) {
-  const lines = {
-    iago: "Ah. A curious visitor. I like that. What do you want to know? Choose your words carefully — I'm very good at using them against people. 😈",
-    othello: "Come in, friend. I have time for questions, though... my mind has not been entirely my own lately. What troubles you?",
-    desdemona: "Hello. I'm glad someone's finally asking me what I think. Most people around here just talk *about* me. So — what would you like to know?",
-    emilia: "You want to talk? Fine. But I'm not sugarcoating anything. I've had enough of that. What do you want to know?"
-  };
-  return lines[c];
-}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-async function sendChat() {
-  const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if(!msg) return;
-  input.value = '';
-
-  const msgs = document.getElementById('chatMessages');
-  const ch = chars[currentChar];
-
-  // Add user message
-  msgs.innerHTML += `<div class="message user"><div class="msg-bubble">${escHtml(msg)}</div><span class="msg-time">You · just now</span></div>`;
+async function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';
+  const msgs=document.getElementById('chatMessages');
+  const ch=chars[currentChar];
+  msgs.innerHTML+=`<div class="message user"><div class="msg-bubble">${escHtml(msg)}</div><span class="msg-time">You · just now</span></div>`;
   chatHistory.push({role:'user',content:msg});
-
-  // Typing indicator
-  const typingId = 'typing-'+Date.now();
-  msgs.innerHTML += `<div class="message ai" id="${typingId}"><div class="msg-bubble typing"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
-
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:1000,
-        system: ch.system,
-        messages: chatHistory
-      })
-    });
-    const data = await response.json();
-    const reply = data.content?.[0]?.text || "...something stirs in the silence.";
+  const tid='t'+Date.now();
+  msgs.innerHTML+=`<div class="message ai" id="${tid}"><div class="msg-bubble"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:ch.system,messages:chatHistory})});
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||"...something stirs in the silence.";
     chatHistory.push({role:'assistant',content:reply});
-
-    const typingEl = document.getElementById(typingId);
-    if(typingEl) typingEl.innerHTML = `<div class="msg-bubble">${escHtml(reply)}</div><span class="msg-time">${ch.name} · just now</span>`;
-  } catch(e) {
-    const typingEl = document.getElementById(typingId);
-    if(typingEl) typingEl.innerHTML = `<div class="msg-bubble" style="opacity:.5;font-style:italic;">The character is silent for now. (API error — try again.)</div>`;
+    const el=document.getElementById(tid);
+    if(el)el.innerHTML=`<div class="msg-bubble">${escHtml(reply)}</div><span class="msg-time">${ch.name} · just now</span>`;
+  }catch(e){
+    const el=document.getElementById(tid);
+    if(el)el.innerHTML=`<div class="msg-bubble" style="opacity:.5;font-style:italic;">The character is silent for now. (Try again.)</div>`;
   }
-  msgs.scrollTop = msgs.scrollHeight;
+  msgs.scrollTop=msgs.scrollHeight;
 }
 
-async function translateShakespeare() {
-  const input = document.getElementById('shakeInput').value.trim();
-  if(!input) return;
-  const output = document.getElementById('translateOutput');
-  output.innerHTML = '<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
-
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:1000,
-        messages:[{role:"user",content:`You are a Shakespeare-to-modern-slang translator for Grade 11 students studying Othello. 
-        
-Translate this passage into modern casual/slang English that a teenager today would say. Make it feel authentic and natural — not cringe, actually how people talk. Then add a short "What's really going on:" note explaining the deeper meaning or manipulation happening beneath the surface.
-
-Format:
-🗣️ Modern Translation:
-[translation here]
-
-🔍 What's really going on:
-[brief insight — 2-3 sentences]
-
-Passage to translate:
-"${input}"`}]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text || "Translation unavailable.";
-    output.innerHTML = text.replace(/\n/g,'<br>');
-  } catch(e) {
-    output.innerHTML = 'Translation unavailable right now. Please try again.';
-  }
+async function translateShakespeare(){
+  const input=document.getElementById('shakeInput').value.trim();if(!input)return;
+  const output=document.getElementById('translateOutput');
+  output.innerHTML='<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:`You are a Shakespeare-to-modern-slang translator for Grade 11 students studying Othello.\n\nTranslate this passage into modern casual/slang English a teenager today would actually say. Make it authentic, not cringe. Then add a short insight note.\n\nFormat:\n🗣️ Modern Translation:\n[translation]\n\n🔍 What's really going on:\n[2-3 sentence insight]\n\nPassage:\n"${input}"`}]})});
+    const data=await res.json();
+    output.innerHTML=(data.content?.[0]?.text||'Translation unavailable.').replace(/\n/g,'<br>');
+  }catch(e){output.innerHTML='Translation unavailable right now. Please try again.';}
 }
 
-// ---- ACT FORMS ----
-const actForms = {
-  1: { title:"Act I — The Outsider", theme:"Racism &amp; Prejudice", questions:[
-    "How does Brabantio react to Othello and Desdemona's relationship? What specific language does he use?",
-    "How does this compare to prejudice and stereotypes you see today? Can you think of a specific modern example?",
-    "What does Othello's response to Brabantio's accusations tell us about his character and his position in Venetian society?"
-  ]},
-  2: { title:"Act II — The Setup &amp; Sabotage", theme:"Reputation &amp; Toxic Friendship", questions:[
-    "How does Iago use Cassio's weakness (drinking) to set up his downfall? Walk through the steps.",
-    "Have you ever seen a 'toxic friend' dynamic like this? What makes Iago's manipulation so effective?",
-    "How does losing his reputation affect Cassio? Why does reputation matter so much in this world?"
-  ]},
-  3: { title:"Act III — The Web of Lies", theme:"Gaslighting &amp; Fake News", questions:[
-    "Iago never directly accuses Desdemona. How does he plant the seed of doubt in Othello's mind?",
-    "Why is this kind of indirect manipulation (gaslighting) often more effective than a direct accusation?",
-    "Find a specific quote where Iago seems to be helping Othello while actually making things worse."
-  ]},
-  4: { title:"Acts IV &amp; V — The Tragic Fallout", theme:"Sexism &amp; Toxic Masculinity", questions:[
-    "How are Desdemona and Emilia treated by their husbands in these acts? What specific moments stand out?",
-    "Desdemona and Emilia respond very differently to how they're treated. Compare their responses.",
-    "At what point could the tragedy have been stopped? Who had the power and knowledge to change the outcome — and why didn't they?"
-  ]}
+/* ---- ACT FORMS ---- */
+const actForms={
+  1:{title:"Act I — The Outsider",theme:"Racism & Prejudice",questions:["How does Brabantio react to Othello and Desdemona's relationship? What specific language does he use?","How does this compare to prejudice and stereotypes you see today? Give a specific modern example.","What does Othello's response to Brabantio tell us about his character and his position in Venetian society?"]},
+  2:{title:"Act II — The Setup & Sabotage",theme:"Reputation & Toxic Friendship",questions:["How does Iago use Cassio's weakness (drinking) to set up his downfall? Walk through the steps.","Have you ever seen a 'toxic friend' dynamic like this? What makes Iago's manipulation so effective?","How does losing his reputation affect Cassio? Why does reputation matter so much in this world?"]},
+  3:{title:"Act III — The Web of Lies",theme:"Gaslighting & Fake News",questions:["Iago never directly accuses Desdemona. How does he plant the seed of doubt in Othello's mind?","Why is indirect manipulation (gaslighting) often more effective than a direct accusation?","Find a specific quote where Iago seems to be helping Othello while actually making things worse."]},
+  4:{title:"Acts IV & V — The Tragic Fallout",theme:"Sexism & Toxic Masculinity",questions:["How are Desdemona and Emilia treated by their husbands? What specific moments stand out?","Desdemona and Emilia respond very differently to how they're treated. Compare their responses.","At what point could the tragedy have been stopped? Who had the power to change the outcome — and why didn't they?"]}
 };
 
-function openActForm(num) {
-  const form = actForms[num] || actForms[4];
-  const modal = document.getElementById('actModal');
-  document.getElementById('actModalContent').innerHTML = `
+function openActForm(num){
+  const form=actForms[num]||actForms[4];
+  document.getElementById('actModalContent').innerHTML=`
     <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Director's Cut · Formative Check-In</p>
-    <h3 style="font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--parchment);margin-bottom:6px;">${form.title}</h3>
-    <p style="font-family:'EB Garamond',serif;font-style:italic;opacity:.7;margin-bottom:28px;">Theme: ${form.theme}</p>
+    <h3 style="font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--parch-text);margin-bottom:6px;">${form.title}</h3>
+    <p style="font-family:'EB Garamond',serif;font-style:italic;color:var(--parch-muted);margin-bottom:28px;">Theme: ${form.theme}</p>
     ${form.questions.map((q,i)=>`
       <div style="margin-bottom:24px;">
         <p style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Question ${i+1}</p>
-        <p style="font-family:'EB Garamond',serif;font-size:1rem;line-height:1.6;opacity:.9;margin-bottom:10px;">${q}</p>
-        <textarea placeholder="Your response..." style="width:100%;background:rgba(201,146,58,.04);border:1px solid rgba(201,146,58,.2);color:var(--parchment);font-family:'EB Garamond',serif;font-size:.95rem;padding:14px;resize:vertical;min-height:90px;outline:none;"></textarea>
-      </div>
-    `).join('')}
-    <button class="btn btn-primary" onclick="submitModal(${num})" style="width:100%;">Submit Responses</button>
-  `;
-  modal.style.display = 'flex';
+        <p style="font-family:'EB Garamond',serif;font-size:1rem;line-height:1.6;color:var(--parch-text);opacity:.9;margin-bottom:10px;">${q}</p>
+        <textarea class="parch-input" placeholder="Your response..." style="resize:vertical;min-height:90px;display:block;"></textarea>
+      </div>`).join('')}
+    <button class="btn btn-primary" onclick="submitModal(${num})" style="width:100%;">Submit Responses</button>`;
+  document.getElementById('actModal').style.display='flex';
 }
 
-function closeActForm() {
-  document.getElementById('actModal').style.display = 'none';
-}
+function closeActForm(){document.getElementById('actModal').style.display='none';}
 
-function submitModal(num) {
-  document.getElementById('actModalContent').innerHTML = `
-    <div style="text-align:center;padding:40px 0;">
-      <div style="font-size:2.5rem;margin-bottom:16px;">✦</div>
-      <p style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--gold);margin-bottom:12px;">Submitted!</p>
-      <p style="font-family:'EB Garamond',serif;font-style:italic;opacity:.75;">Your Act ${num} responses have been recorded. Continue to the next act when you're ready.</p>
-      <button class="btn btn-outline" onclick="closeActForm()" style="margin-top:24px;">Continue</button>
-    </div>
-  `;
+function submitModal(num){
+  document.getElementById('actModalContent').innerHTML=`<div style="text-align:center;padding:40px 0;"><div style="font-size:2.5rem;margin-bottom:16px;">✦</div><p style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:var(--gold);margin-bottom:12px;">Submitted!</p><p style="font-family:'EB Garamond',serif;font-style:italic;color:var(--parch-muted);">Your Act ${num} responses have been recorded. Continue to the next act when you're ready.</p><button class="btn btn-outline" onclick="closeActForm()" style="margin-top:24px;">Continue</button></div>`;
   markProgress();
 }
 
-function submitForm(id, btn) {
-  btn.textContent = '✦ Submitted';
-  btn.style.background = 'rgba(201,146,58,.3)';
-  btn.disabled = true;
-  markProgress();
+function submitForm(id,btn){
+  btn.textContent='✦ Submitted';btn.style.background='rgba(184,131,46,.3)';btn.disabled=true;markProgress();
 }
 
-function markProgress() {
-  completedWeeks.add(Date.now());
-  const pct = Math.min(100, completedWeeks.size * 20);
-  document.getElementById('progressFill').style.width = pct+'%';
-  document.getElementById('progressPct').textContent = pct+'%';
+function markProgress(){
+  completedItems.add(Date.now());
+  const pct=Math.min(100,completedItems.size*20);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressPct').textContent=pct+'%';
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// Enter key for chat
-document.addEventListener('keydown', function(e) {
-  if(e.key === 'Escape') closeActForm();
-});
-
-// Highlight nav on scroll
-window.addEventListener('scroll',()=>{
-  const tabs = document.querySelectorAll('.week-tab');
-  // Simple active state — overview only
-});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeActForm();});
 </script>
 </body>
 </html>
