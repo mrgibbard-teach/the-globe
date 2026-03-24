@@ -6,63 +6,174 @@
 <title>The Globe — Shakespeare Learning Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #0d0a07;
-  --parchment: #f5edd8;
-  --gold: #c9923a;
-  --gold-light: #e8b96a;
-  --crimson: #7a1c24;
-  --shadow: rgba(0,0,0,0.7);
-  --glow: rgba(201,146,58,0.4);
+:root{
+  --ink:#0d0a07; --parchment:#f5edd8; --gold:#c9923a; --gold-light:#e8b96a;
+  --crimson:#7a1c24; --crimson-light:#a02535; --shadow:rgba(0,0,0,.7); --glow:rgba(201,146,58,.4);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--ink); color:var(--parchment); font-family:'EB Garamond',serif; min-height:100vh; overflow-x:hidden; }
-#stars { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 40px; background:linear-gradient(to bottom,rgba(13,10,7,0.95),transparent); }
-.nav-brand { font-family:'Cinzel',serif; font-size:1rem; letter-spacing:.3em; color:var(--gold); text-decoration:none; text-transform:uppercase; }
-.nav-links { display:flex; gap:32px; list-style:none; }
-.nav-links a { font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:.2em; color:var(--parchment); text-decoration:none; text-transform:uppercase; opacity:.7; transition:opacity .3s,color .3s; }
-.nav-links a:hover { opacity:1; color:var(--gold); }
-.hero { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 20px 40px; text-align:center; }
-.hero-eyebrow { font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.5em; color:var(--gold); text-transform:uppercase; margin-bottom:20px; opacity:0; animation:fadeUp 1s ease forwards .3s; }
-.hero-title { font-family:'Cinzel Decorative',serif; font-size:clamp(2.5rem,7vw,6rem); font-weight:900; line-height:1.05; color:var(--parchment); text-shadow:0 0 60px var(--glow),0 2px 4px var(--shadow); opacity:0; animation:fadeUp 1s ease forwards .5s; }
-.hero-title span { color:var(--gold); }
-.hero-sub { font-family:'EB Garamond',serif; font-size:clamp(1rem,2vw,1.3rem); font-style:italic; color:var(--parchment); opacity:0; margin-top:16px; max-width:500px; animation:fadeUp 1s ease forwards .7s; }
-.scroll-hint { position:absolute; bottom:32px; font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.4em; color:var(--gold); text-transform:uppercase; opacity:0; animation:fadeUp 1s ease forwards 1.5s,pulse 2s ease-in-out infinite 2.5s; }
-.globe-section { position:relative; z-index:1; padding:60px 20px 80px; text-align:center; }
-.globe-label { font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.5em; color:var(--gold); text-transform:uppercase; margin-bottom:12px; }
-.globe-subtitle { font-family:'EB Garamond',serif; font-style:italic; font-size:1.1rem; color:var(--parchment); opacity:.7; margin-bottom:50px; }
-.globe-svg-container { width:100%; max-width:700px; margin:0 auto; }
-.globe-zone { cursor:pointer; }
-.globe-zone:hover .zone-glow { opacity:1 !important; }
-.plays-section { position:relative; z-index:1; padding:40px 40px 100px; max-width:1200px; margin:0 auto; }
-.section-heading { font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.5em; color:var(--gold); text-transform:uppercase; text-align:center; margin-bottom:8px; }
-.section-title { font-family:'Cinzel Decorative',serif; font-size:clamp(1.5rem,3vw,2.5rem); text-align:center; color:var(--parchment); margin-bottom:50px; }
-.plays-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; }
-.play-card { position:relative; border:1px solid rgba(201,146,58,.25); background:rgba(201,146,58,.04); padding:32px 28px; cursor:pointer; transition:all .4s; overflow:hidden; text-decoration:none; display:block; color:inherit; }
-.play-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); transform:scaleX(0); transition:transform .4s; }
-.play-card:hover { border-color:var(--gold); background:rgba(201,146,58,.08); transform:translateY(-4px); }
-.play-card:hover::before { transform:scaleX(1); }
-.play-card.featured { border-color:var(--gold); background:rgba(201,146,58,.08); }
-.play-badge { display:inline-block; font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.3em; color:var(--crimson); background:var(--gold); padding:3px 10px; text-transform:uppercase; margin-bottom:16px; }
-.play-genre { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.3em; color:var(--gold); text-transform:uppercase; margin-bottom:10px; opacity:.8; }
-.play-title-card { font-family:'Cinzel Decorative',serif; font-size:1.4rem; color:var(--parchment); margin-bottom:12px; line-height:1.2; }
-.play-desc { font-family:'EB Garamond',serif; font-size:.95rem; line-height:1.6; color:var(--parchment); opacity:.7; }
-.play-arrow { position:absolute; bottom:20px; right:24px; font-size:1.2rem; color:var(--gold); opacity:0; transform:translateX(-8px); transition:all .3s; }
-.play-card:hover .play-arrow { opacity:1; transform:translateX(0); }
-.coming-soon { opacity:.4; cursor:default; pointer-events:none; }
-.coming-soon-label { position:absolute; top:16px; right:16px; font-family:'Cinzel',serif; font-size:.55rem; letter-spacing:.2em; color:var(--parchment); opacity:.5; text-transform:uppercase; border:1px solid rgba(245,237,216,.3); padding:3px 8px; }
-.ornamental { text-align:center; color:var(--gold); opacity:.4; font-size:1.5rem; letter-spacing:.5em; margin:20px 0 48px; }
-footer { position:relative; z-index:1; border-top:1px solid rgba(201,146,58,.2); padding:40px; text-align:center; font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.3em; color:var(--parchment); opacity:.4; text-transform:uppercase; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-@keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--parchment);font-family:'EB Garamond',serif;min-height:100vh;overflow-x:hidden;}
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:linear-gradient(to bottom,rgba(13,10,7,.95),transparent);}
+.nav-brand{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.3em;color:var(--gold);text-decoration:none;text-transform:uppercase;}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;color:var(--parchment);text-decoration:none;text-transform:uppercase;opacity:.7;transition:opacity .3s,color .3s;}
+.nav-links a:hover{opacity:1;color:var(--gold);}
+
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 40px;text-align:center;}
+.hero-eyebrow{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 1s ease forwards .3s;}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(2.5rem,7vw,6rem);font-weight:900;line-height:1.05;color:var(--parchment);text-shadow:0 0 60px var(--glow),0 2px 4px var(--shadow);opacity:0;animation:fadeUp 1s ease forwards .5s;}
+.hero-title span{color:var(--gold);}
+.hero-sub{font-family:'EB Garamond',serif;font-size:clamp(1rem,2vw,1.3rem);font-style:italic;color:var(--parchment);opacity:0;margin-top:16px;max-width:500px;animation:fadeUp 1s ease forwards .7s;}
+.scroll-hint{position:absolute;bottom:32px;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;opacity:0;animation:fadeUp 1s ease forwards 1.5s,pulse 2s ease-in-out infinite 2.5s;}
+
+/* ========================================================
+   GLOBE SECTION
+   .globe-stage has padding that creates overflow room for
+   the orbs that sit half-outside the central image frame.
+   ======================================================== */
+.globe-section{position:relative;z-index:1;padding:60px 20px 100px;text-align:center;}
+.globe-label{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.globe-subtitle{font-family:'EB Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--parchment);opacity:.7;margin-bottom:50px;}
+
+.globe-stage{
+  position:relative;
+  width:100%;max-width:960px;
+  margin:0 auto;
+  /* top/bottom padding: room for the orbs that overflow vertically  */
+  /* left/right padding: room for the orbs that overflow horizontally */
+  padding:100px 130px;
+}
+
+/* Central image frame — 3:2 aspect ratio */
+.globe-main-frame{
+  position:relative;
+  width:100%;
+  padding-bottom:66.66%;
+  overflow:hidden;
+  border:2px solid rgba(201,146,58,.45);
+  box-shadow:
+    0 0 0 1px rgba(201,146,58,.1),
+    0 0 60px rgba(201,146,58,.12),
+    0 0 180px rgba(122,28,36,.18),
+    inset 0 0 80px rgba(0,0,0,.4);
+}
+/* Radial vignette keeps label legible */
+.globe-main-frame::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(13,10,7,.55) 100%);
+  z-index:2;pointer-events:none;
+}
+/* Gold corner brackets */
+.gc{position:absolute;width:28px;height:28px;z-index:4;}
+.gc.tl{top:-1px;left:-1px;border-top:2px solid var(--gold);border-left:2px solid var(--gold);}
+.gc.tr{top:-1px;right:-1px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);}
+.gc.bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--gold);border-left:2px solid var(--gold);}
+.gc.br{bottom:-1px;right:-1px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);}
+
+.globe-main-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .7s ease;z-index:0;}
+.globe-main-img.dimmed{opacity:.18;}
+.globe-swap-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;z-index:1;}
+.globe-swap-img.visible{opacity:1;}
+
+.globe-fallback{
+  position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 50% 30%,#2a1a08 0%,#0d0a07 70%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+}
+.globe-fallback-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.2rem,3vw,2.2rem);color:var(--gold);opacity:.4;}
+.globe-fallback-hint{font-family:'EB Garamond',serif;font-style:italic;opacity:.25;font-size:.82rem;}
+
+/* Hover overlay label */
+.globe-hover-label{
+  position:absolute;bottom:0;left:0;right:0;z-index:3;
+  padding:48px 24px 20px;
+  background:linear-gradient(transparent,rgba(13,10,7,.88));
+  text-align:center;opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.globe-hover-label.visible{opacity:1;}
+.globe-hover-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.1rem,3.5vw,2.2rem);color:var(--parchment);text-shadow:0 2px 20px rgba(0,0,0,.9),0 0 40px rgba(201,146,58,.4);line-height:1.1;}
+.globe-hover-sub{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-top:6px;}
+
+/* ========================================================
+   PLAY ORBS
+   Absolutely positioned within .globe-stage.
+   transform() centres each orb on its clock-position anchor.
+   ======================================================== */
+.play-orbs{position:absolute;inset:0;pointer-events:none;}
+.play-orb{
+  position:absolute;pointer-events:all;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  text-decoration:none;color:inherit;cursor:pointer;z-index:10;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.orb-size{width:clamp(72px,8.5vw,110px);height:clamp(72px,8.5vw,110px);}
+.orb-ring{
+  width:100%;height:100%;border-radius:50%;padding:3px;
+  background:conic-gradient(var(--gold-light) 0deg,var(--crimson) 120deg,var(--gold) 240deg,var(--crimson) 300deg,var(--gold-light) 360deg);
+  box-shadow:0 0 16px rgba(201,146,58,.3);
+  transition:box-shadow .3s,padding .3s;position:relative;
+}
+.play-orb:hover .orb-ring{box-shadow:0 0 28px rgba(201,146,58,.75),0 0 56px rgba(122,28,36,.5);padding:4px;}
+.orb-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#1a1208;}
+.orb-img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease;display:block;}
+.play-orb:hover .orb-img{transform:scale(1.14);}
+.orb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:clamp(1.5rem,3.5vw,2.4rem);background:radial-gradient(circle,#2a1a0a,#0d0a07);border-radius:50%;}
+.orb-soon-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(13,10,7,.58);display:flex;align-items:center;justify-content:center;}
+.orb-soon-overlay span{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.1em;color:var(--parchment);text-transform:uppercase;opacity:.7;text-align:center;padding:0 4px;line-height:1.5;}
+.orb-label{font-family:'Cinzel',serif;font-size:clamp(.46rem,.7vw,.66rem);letter-spacing:.12em;color:var(--parchment);text-transform:uppercase;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.95);line-height:1.35;max-width:100px;}
+.play-orb.cs{cursor:default;opacity:.4;}
+.play-orb.cs:hover{transform:none !important;}
+.play-orb.cs .orb-ring{background:conic-gradient(rgba(201,146,58,.2),rgba(122,28,36,.2),rgba(201,146,58,.2));box-shadow:none;}
+
+/* Clock positions — % anchors are relative to .globe-stage */
+.op-9  {left:0;top:50%;transform:translate(-18%,-50%);}
+.op-9:hover{transform:translate(-18%,-50%) scale(1.1);}
+.op-3  {right:0;top:50%;transform:translate(18%,-50%);}
+.op-3:hover{transform:translate(18%,-50%) scale(1.1);}
+.op-11 {left:13%;top:0;transform:translate(-28%,-42%);}
+.op-11:hover{transform:translate(-28%,-42%) scale(1.1);}
+.op-1  {right:13%;top:0;transform:translate(28%,-42%);}
+.op-1:hover{transform:translate(28%,-42%) scale(1.1);}
+.op-7  {left:13%;bottom:0;transform:translate(-28%,42%);}
+.op-7:hover{transform:translate(-28%,42%) scale(1.1);}
+.op-5  {right:13%;bottom:0;transform:translate(28%,42%);}
+.op-5:hover{transform:translate(28%,42%) scale(1.1);}
+
+/* ========================================================
+   PLAYS GRID
+   ======================================================== */
+.plays-section{position:relative;z-index:1;padding:40px 40px 100px;max-width:1200px;margin:0 auto;}
+.section-heading{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;text-align:center;margin-bottom:8px;}
+.section-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,3vw,2.5rem);text-align:center;color:var(--parchment);margin-bottom:50px;}
+.ornamental{text-align:center;color:var(--gold);opacity:.4;font-size:1.5rem;letter-spacing:.5em;margin:20px 0 48px;}
+.plays-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;}
+.play-card{position:relative;border:1px solid rgba(201,146,58,.25);background:rgba(201,146,58,.04);padding:32px 28px;transition:all .4s;overflow:hidden;text-decoration:none;display:block;color:inherit;}
+.play-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s;}
+.play-card:hover{border-color:var(--gold);background:rgba(201,146,58,.08);transform:translateY(-4px);}
+.play-card:hover::before{transform:scaleX(1);}
+.play-card.featured{border-color:var(--gold);background:rgba(201,146,58,.08);}
+.play-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;color:var(--crimson);background:var(--gold);padding:3px 10px;text-transform:uppercase;margin-bottom:16px;}
+.play-genre{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;opacity:.8;}
+.play-title-card{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--parchment);margin-bottom:12px;line-height:1.2;}
+.play-desc{font-family:'EB Garamond',serif;font-size:.95rem;line-height:1.6;color:var(--parchment);opacity:.7;}
+.play-arrow{position:absolute;bottom:20px;right:24px;font-size:1.2rem;color:var(--gold);opacity:0;transform:translateX(-8px);transition:all .3s;}
+.play-card:hover .play-arrow{opacity:1;transform:translateX(0);}
+.coming-soon{opacity:.4;cursor:default;pointer-events:none;}
+.coming-soon-label{position:absolute;top:16px;right:16px;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--parchment);opacity:.5;text-transform:uppercase;border:1px solid rgba(245,237,216,.3);padding:3px 8px;}
+footer{position:relative;z-index:1;border-top:1px solid rgba(201,146,58,.2);padding:40px;text-align:center;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--parchment);opacity:.4;text-transform:uppercase;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
 </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
+
 <nav>
   <a href="index.html" class="nav-brand">The Globe</a>
   <ul class="nav-links">
+    <li><a href="#globe">The Theatre</a></li>
     <li><a href="#plays">The Plays</a></li>
     <li><a href="othello.html">Othello</a></li>
   </ul>
@@ -75,90 +186,200 @@ footer { position:relative; z-index:1; border-top:1px solid rgba(201,146,58,.2);
   <p class="scroll-hint">↓ Enter the Theatre ↓</p>
 </section>
 
-<section class="globe-section">
+<!-- ============================================================
+     GLOBE THEATRE + PLAY ORBS
+     ============================================================ -->
+<section class="globe-section" id="globe">
   <p class="globe-label">Navigate the Theatre</p>
-  <p class="globe-subtitle">Click a section of the Globe to explore a play</p>
-  <div class="globe-svg-container">
-    <svg viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-      <defs>
-        <radialGradient id="skyGrad" cx="50%" cy="30%">
-          <stop offset="0%" stop-color="#1a1408"/><stop offset="100%" stop-color="#0d0a07"/>
-        </radialGradient>
-        <radialGradient id="stageGlow" cx="50%" cy="50%">
-          <stop offset="0%" stop-color="#c9923a" stop-opacity="0.35"/><stop offset="100%" stop-color="#c9923a" stop-opacity="0"/>
-        </radialGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
+  <p class="globe-subtitle">Hover over a play · click to enter its world</p>
 
-      <!-- Sky -->
-      <ellipse cx="350" cy="200" rx="320" ry="210" fill="url(#skyGrad)" opacity="0.9"/>
-      <!-- Outer ring -->
-      <ellipse cx="350" cy="330" rx="295" ry="125" fill="#1a110a" stroke="#c9923a" stroke-width="1.5" opacity="0.9"/>
-      <!-- Mid ring -->
-      <ellipse cx="350" cy="310" rx="235" ry="100" fill="#150e08" stroke="#c9923a" stroke-width="1" opacity="0.9"/>
-      <!-- Inner yard -->
-      <ellipse cx="350" cy="290" rx="170" ry="72" fill="#0f0b06" stroke="#c9923a" stroke-width="1.5"/>
-      <!-- Stage -->
-      <rect x="292" y="260" width="116" height="66" rx="3" fill="#1e1208" stroke="#c9923a" stroke-width="1.5"/>
-      <ellipse cx="350" cy="260" rx="58" ry="17" fill="#241608" stroke="#c9923a" stroke-width="1"/>
-      <ellipse cx="350" cy="285" rx="75" ry="38" fill="url(#stageGlow)"/>
-      <!-- Canopy -->
-      <rect x="308" y="185" width="84" height="75" rx="3" fill="#1a1208" stroke="#c9923a" stroke-width="1.5"/>
-      <line x1="308" y1="185" x2="292" y2="260" stroke="#c9923a" stroke-width="1" opacity="0.6"/>
-      <line x1="392" y1="185" x2="408" y2="260" stroke="#c9923a" stroke-width="1" opacity="0.6"/>
-      <!-- Flag -->
-      <line x1="350" y1="105" x2="350" y2="185" stroke="#c9923a" stroke-width="2"/>
-      <polygon points="350,105 378,118 350,131" fill="#c9923a" opacity="0.9"/>
-      <!-- Stage label -->
-      <text x="350" y="291" text-anchor="middle" fill="#c9923a" font-family="Cinzel,serif" font-size="9" letter-spacing="3" opacity="0.9">THE STAGE</text>
+  <div class="globe-stage" id="globeStage">
 
-      <!-- OTHELLO Zone - Left gallery - CLICKABLE -->
-      <a href="othello.html">
-        <g class="globe-zone">
-          <path d="M 75 275 Q 135 215 205 238 Q 162 305 128 348 Z" fill="#7a1c24" opacity="0.75" class="zone-glow" style="transition:opacity .3s"/>
-          <path d="M 75 275 Q 135 215 205 238 Q 162 305 128 348 Z" fill="none" stroke="#e8b96a" stroke-width="1.5" opacity="0.9"/>
-          <text x="126" y="286" text-anchor="middle" fill="#f5edd8" font-family="Cinzel Decorative,serif" font-size="12" filter="url(#glow)">Othello</text>
-          <text x="126" y="302" text-anchor="middle" fill="#e8b96a" font-family="Cinzel,serif" font-size="9" letter-spacing="2">▶ ENTER</text>
-        </g>
+    <!-- Central image frame -->
+    <div class="globe-main-frame" id="globeFrame">
+      <div class="gc tl"></div><div class="gc tr"></div>
+      <div class="gc bl"></div><div class="gc br"></div>
+
+      <!--
+        ┌─────────────────────────────────────────────────────┐
+        │  BASE IMAGE                                         │
+        │  Filename : images/globe-theatre.jpg               │
+        │  Size     : 1400 × 933 px  (3:2 landscape)         │
+        │  Subject  : Exterior or bird's-eye painting of the  │
+        │             Globe Theatre, Elizabethan era style    │
+        └─────────────────────────────────────────────────────┘
+      -->
+      <img src="images/globe-theatre.jpg"
+           alt="The Globe Theatre as it appeared in Shakespeare's time"
+           class="globe-main-img" id="globeBase"
+           onerror="this.style.display='none'">
+
+      <!-- Fallback shown only when globe-theatre.jpg is absent -->
+      <div class="globe-fallback" id="globeFallback">
+        <div class="globe-fallback-title">The Globe Theatre</div>
+        <div class="globe-fallback-hint">Place globe-theatre.jpg in the /images/ folder to complete this view</div>
+      </div>
+
+      <!--
+        ┌─────────────────────────────────────────────────────┐
+        │  SCENE SWAP IMAGES  (revealed on orb hover)         │
+        │  Each should be 1400 × 933 px  (same as base)       │
+        │                                                     │
+        │  othello-scene.jpg   — Othello facing viewer,       │
+        │                        Iago whispering behind       │
+        │  hamlet-scene.jpg    — Hamlet with Yorick's skull   │
+        │  macbeth-scene.jpg   — Witches / Macbeth + dagger   │
+        │  romeo-scene.jpg     — Balcony / the two lovers     │
+        │  midsummer-scene.jpg — Titania & Bottom / fairy glow│
+        │  tempest-scene.jpg   — Prospero over stormy sea     │
+        └─────────────────────────────────────────────────────┘
+      -->
+      <img src="images/othello-scene.jpg"   alt="Othello"                 id="swap-othello"   class="globe-swap-img" onerror="this.style.display='none'">
+      <img src="images/hamlet-scene.jpg"    alt="Hamlet"                  id="swap-hamlet"    class="globe-swap-img" onerror="this.style.display='none'">
+      <img src="images/macbeth-scene.jpg"   alt="Macbeth"                 id="swap-macbeth"   class="globe-swap-img" onerror="this.style.display='none'">
+      <img src="images/romeo-scene.jpg"     alt="Romeo and Juliet"        id="swap-romeo"     class="globe-swap-img" onerror="this.style.display='none'">
+      <img src="images/midsummer-scene.jpg" alt="A Midsummer Night"       id="swap-midsummer" class="globe-swap-img" onerror="this.style.display='none'">
+      <img src="images/tempest-scene.jpg"   alt="The Tempest"             id="swap-tempest"   class="globe-swap-img" onerror="this.style.display='none'">
+
+      <!-- Fade-in label over image on hover -->
+      <div class="globe-hover-label" id="globeLabel">
+        <div class="globe-hover-title" id="globeHoverTitle"></div>
+        <div class="globe-hover-sub"   id="globeHoverSub"></div>
+      </div>
+    </div><!-- /globe-main-frame -->
+
+
+    <!-- ============================================================
+         PLAY ORBS — clock positions around the central frame
+         ============================================================ -->
+    <div class="play-orbs">
+
+      <!--
+        OTHELLO — 9 o'clock (left-middle) — LIVE
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/othello-thumb.jpg       │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Othello's face forward;         │
+        │               Iago half-visible behind him    │
+        └─────────────────────────────────────────────┘
+      -->
+      <a href="othello.html" class="play-orb op-9"
+         data-play="othello" data-title="Othello" data-sub="▶ Enter Now">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner">
+            <img src="images/othello-thumb.jpg" alt="Othello" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>👁️</div>'">
+          </div>
+        </div>
+        <div class="orb-label">Othello</div>
       </a>
 
-      <!-- HAMLET Zone - Right gallery -->
-      <g style="opacity:.38; cursor:default;">
-        <path d="M 625 275 Q 565 215 495 238 Q 538 305 572 348 Z" fill="#1e3a5f"/>
-        <path d="M 625 275 Q 565 215 495 238 Q 538 305 572 348 Z" fill="none" stroke="#6a9fc8" stroke-width="1" opacity="0.5"/>
-        <text x="573" y="286" text-anchor="middle" fill="#f5edd8" font-family="Cinzel Decorative,serif" font-size="12">Hamlet</text>
-        <text x="573" y="302" text-anchor="middle" fill="#aaa" font-family="Cinzel,serif" font-size="8" letter-spacing="1">COMING SOON</text>
-      </g>
+      <!--
+        HAMLET — 1-2 o'clock (top-right) — COMING SOON
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/hamlet-thumb.jpg        │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Hamlet holding Yorick's skull  │
+        └─────────────────────────────────────────────┘
+      -->
+      <div class="play-orb op-1 cs"
+           data-play="hamlet" data-title="Hamlet" data-sub="Coming Soon">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner" style="position:relative;">
+            <img src="images/hamlet-thumb.jpg" alt="Hamlet" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>💀</div>'">
+            <div class="orb-soon-overlay"><span>Coming<br>Soon</span></div>
+          </div>
+        </div>
+        <div class="orb-label">Hamlet</div>
+      </div>
 
-      <!-- MACBETH Zone - Lower left -->
-      <g style="opacity:.35; cursor:default;">
-        <path d="M 62 375 Q 122 332 185 358 Q 143 412 100 422 Z" fill="#2a1a3a"/>
-        <text x="117" y="388" text-anchor="middle" fill="#f5edd8" font-family="Cinzel Decorative,serif" font-size="11">Macbeth</text>
-        <text x="117" y="402" text-anchor="middle" fill="#aaa" font-family="Cinzel,serif" font-size="8">COMING SOON</text>
-      </g>
+      <!--
+        MACBETH — 10-11 o'clock (top-left) — COMING SOON
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/macbeth-thumb.jpg       │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Macbeth with dagger / witches  │
+        └─────────────────────────────────────────────┘
+      -->
+      <div class="play-orb op-11 cs"
+           data-play="macbeth" data-title="Macbeth" data-sub="Coming Soon">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner" style="position:relative;">
+            <img src="images/macbeth-thumb.jpg" alt="Macbeth" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>🗡️</div>'">
+            <div class="orb-soon-overlay"><span>Coming<br>Soon</span></div>
+          </div>
+        </div>
+        <div class="orb-label">Macbeth</div>
+      </div>
 
-      <!-- R&J Zone - Lower right -->
-      <g style="opacity:.35; cursor:default;">
-        <path d="M 638 375 Q 578 332 515 358 Q 557 412 600 422 Z" fill="#3a1a1a"/>
-        <text x="581" y="383" text-anchor="middle" fill="#f5edd8" font-family="Cinzel Decorative,serif" font-size="11">Romeo</text>
-        <text x="581" y="397" text-anchor="middle" fill="#f5edd8" font-family="Cinzel Decorative,serif" font-size="11">&amp; Juliet</text>
-        <text x="581" y="411" text-anchor="middle" fill="#aaa" font-family="Cinzel,serif" font-size="8">COMING SOON</text>
-      </g>
+      <!--
+        ROMEO & JULIET — 3 o'clock (right-middle) — COMING SOON
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/romeo-thumb.jpg         │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Balcony scene / the two lovers │
+        └─────────────────────────────────────────────┘
+      -->
+      <div class="play-orb op-3 cs"
+           data-play="romeo" data-title="Romeo &amp; Juliet" data-sub="Coming Soon">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner" style="position:relative;">
+            <img src="images/romeo-thumb.jpg" alt="Romeo and Juliet" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>🌹</div>'">
+            <div class="orb-soon-overlay"><span>Coming<br>Soon</span></div>
+          </div>
+        </div>
+        <div class="orb-label">Romeo<br>&amp; Juliet</div>
+      </div>
 
-      <!-- Stars -->
-      <circle cx="200" cy="128" r="1.5" fill="#c9923a" opacity="0.8"/>
-      <circle cx="500" cy="108" r="1" fill="#f5edd8" opacity="0.6"/>
-      <circle cx="155" cy="158" r="1" fill="#f5edd8" opacity="0.5"/>
-      <circle cx="545" cy="148" r="1.5" fill="#c9923a" opacity="0.7"/>
-      <circle cx="350" cy="138" r="1" fill="#f5edd8" opacity="0.5"/>
-      <circle cx="420" cy="118" r="1.2" fill="#c9923a" opacity="0.6"/>
-      <circle cx="278" cy="112" r="1.5" fill="#f5edd8" opacity="0.7"/>
-      <circle cx="460" cy="135" r="1" fill="#f5edd8" opacity="0.4"/>
-      <circle cx="240" cy="148" r="1" fill="#c9923a" opacity="0.5"/>
-    </svg>
-  </div>
+      <!--
+        MIDSUMMER — 7-8 o'clock (bottom-left) — COMING SOON
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/midsummer-thumb.jpg     │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Titania & Bottom / fairy glow  │
+        └─────────────────────────────────────────────┘
+      -->
+      <div class="play-orb op-7 cs"
+           data-play="midsummer" data-title="A Midsummer Night's Dream" data-sub="Coming Soon">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner" style="position:relative;">
+            <img src="images/midsummer-thumb.jpg" alt="A Midsummer Night's Dream" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>🧚</div>'">
+            <div class="orb-soon-overlay"><span>Coming<br>Soon</span></div>
+          </div>
+        </div>
+        <div class="orb-label">Midsummer<br>Night's Dream</div>
+      </div>
+
+      <!--
+        THE TEMPEST — 4-5 o'clock (bottom-right) — COMING SOON
+        ┌─────────────────────────────────────────────┐
+        │  Thumbnail  : images/tempest-thumb.jpg       │
+        │  Size       : 200 × 200 px                   │
+        │  Subject    : Prospero + stormy sea          │
+        └─────────────────────────────────────────────┘
+      -->
+      <div class="play-orb op-5 cs"
+           data-play="tempest" data-title="The Tempest" data-sub="Coming Soon">
+        <div class="orb-size orb-ring">
+          <div class="orb-inner" style="position:relative;">
+            <img src="images/tempest-thumb.jpg" alt="The Tempest" class="orb-img"
+                 onerror="this.parentElement.innerHTML='<div class=orb-placeholder>🌊</div>'">
+            <div class="orb-soon-overlay"><span>Coming<br>Soon</span></div>
+          </div>
+        </div>
+        <div class="orb-label">The Tempest</div>
+      </div>
+
+    </div><!-- /play-orbs -->
+  </div><!-- /globe-stage -->
 </section>
 
+
+<!-- PLAYS GRID -->
 <section class="plays-section" id="plays">
   <p class="section-heading">The Repertoire</p>
   <h2 class="section-title">Choose Your Play</h2>
@@ -171,50 +392,75 @@ footer { position:relative; z-index:1; border-top:1px solid rgba(201,146,58,.2);
       <p class="play-desc">Manipulation, jealousy, race, and power. Iago's lies destroy everything — but what if the story ended differently?</p>
       <span class="play-arrow">→</span>
     </a>
-    <div class="play-card coming-soon">
-      <span class="coming-soon-label">Coming Soon</span>
-      <p class="play-genre">Tragedy</p>
-      <h3 class="play-title-card">Hamlet</h3>
-      <p class="play-desc">To be, or not to be. A prince haunted by his father's ghost navigates betrayal and revenge.</p>
-    </div>
-    <div class="play-card coming-soon">
-      <span class="coming-soon-label">Coming Soon</span>
-      <p class="play-genre">Tragedy</p>
-      <h3 class="play-title-card">Macbeth</h3>
-      <p class="play-desc">Ambition, prophecy, and guilt. A warrior becomes a tyrant — and cannot escape his own mind.</p>
-    </div>
-    <div class="play-card coming-soon">
-      <span class="coming-soon-label">Coming Soon</span>
-      <p class="play-genre">Tragedy · Romance</p>
-      <h3 class="play-title-card">Romeo &amp; Juliet</h3>
-      <p class="play-desc">Star-crossed lovers, feuding families, and a love that moves faster than reason.</p>
-    </div>
-    <div class="play-card coming-soon">
-      <span class="coming-soon-label">Coming Soon</span>
-      <p class="play-genre">Comedy</p>
-      <h3 class="play-title-card">A Midsummer Night's Dream</h3>
-      <p class="play-desc">Love spells, enchanted forests, and mistaken identities between reality and dream.</p>
-    </div>
-    <div class="play-card coming-soon">
-      <span class="coming-soon-label">Coming Soon</span>
-      <p class="play-genre">Romance</p>
-      <h3 class="play-title-card">The Tempest</h3>
-      <p class="play-desc">Magic, colonialism, and forgiveness on an enchanted island ruled by the exiled Prospero.</p>
-    </div>
+    <div class="play-card coming-soon"><span class="coming-soon-label">Coming Soon</span><p class="play-genre">Tragedy</p><h3 class="play-title-card">Hamlet</h3><p class="play-desc">To be, or not to be. A prince haunted by his father's ghost navigates betrayal and revenge.</p></div>
+    <div class="play-card coming-soon"><span class="coming-soon-label">Coming Soon</span><p class="play-genre">Tragedy</p><h3 class="play-title-card">Macbeth</h3><p class="play-desc">Ambition, prophecy, and guilt. A warrior becomes a tyrant — and cannot escape his own mind.</p></div>
+    <div class="play-card coming-soon"><span class="coming-soon-label">Coming Soon</span><p class="play-genre">Tragedy · Romance</p><h3 class="play-title-card">Romeo &amp; Juliet</h3><p class="play-desc">Star-crossed lovers, feuding families, and a love that moves faster than reason.</p></div>
+    <div class="play-card coming-soon"><span class="coming-soon-label">Coming Soon</span><p class="play-genre">Comedy</p><h3 class="play-title-card">A Midsummer Night's Dream</h3><p class="play-desc">Love spells, enchanted forests, and mistaken identities between reality and dream.</p></div>
+    <div class="play-card coming-soon"><span class="coming-soon-label">Coming Soon</span><p class="play-genre">Romance</p><h3 class="play-title-card">The Tempest</h3><p class="play-desc">Magic, colonialism, and forgiveness on an enchanted island ruled by the exiled Prospero.</p></div>
   </div>
 </section>
 
 <footer>The Globe · Shakespeare Learning Hub · Ontario Curriculum Grade 11 · Teachers College</footer>
 
 <script>
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
-let stars = [];
-function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-function init(){ stars=[]; for(let i=0;i<180;i++) stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height*.65,r:Math.random()*1.2+.3,speed:Math.random()*.008+.002,phase:Math.random()*Math.PI*2}); }
-function draw(t){ ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s=>{ const a=.3+.7*(.5+.5*Math.sin(t*.001*s.speed*1000+s.phase)); ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle=`rgba(245,237,216,${a})`; ctx.fill(); }); requestAnimationFrame(draw); }
-resize(); init(); requestAnimationFrame(draw);
-window.addEventListener('resize',()=>{ resize(); init(); });
+/* STARFIELD */
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');let stars=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+function init(){stars=[];for(let i=0;i<200;i++)stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height*.7,r:Math.random()*1.2+.3,speed:Math.random()*.007+.002,phase:Math.random()*Math.PI*2});}
+function draw(t){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{const a=.25+.75*(.5+.5*Math.sin(t*.001*s.speed*800+s.phase));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(245,237,216,${a})`;ctx.fill();});requestAnimationFrame(draw);}
+resize();init();requestAnimationFrame(draw);
+window.addEventListener('resize',()=>{resize();init();});
+
+/* FALLBACK: hide placeholder once base image loads */
+const globeBase=document.getElementById('globeBase'),fallback=document.getElementById('globeFallback');
+if(globeBase){
+  const hide=()=>{if(fallback)fallback.style.display='none';};
+  globeBase.addEventListener('load',hide);
+  if(globeBase.complete&&globeBase.naturalWidth>0)hide();
+}
+
+/* HOVER SWAP */
+const orbs=document.querySelectorAll('.play-orb');
+const base=document.getElementById('globeBase');
+const labelBox=document.getElementById('globeLabel');
+const titleEl=document.getElementById('globeHoverTitle');
+const subEl=document.getElementById('globeHoverSub');
+let activeId=null,hideTimer=null;
+
+function showSwap(playId,title,sub){
+  clearTimeout(hideTimer);
+  if(activeId&&activeId!==playId){
+    const prev=document.getElementById('swap-'+activeId);
+    if(prev)prev.classList.remove('visible');
+  }
+  const swap=document.getElementById('swap-'+playId);
+  if(swap)swap.classList.add('visible');
+  if(base)base.classList.add('dimmed');
+  titleEl.textContent=title;
+  subEl.textContent=sub;
+  labelBox.classList.add('visible');
+  activeId=playId;
+}
+function clearSwap(){
+  hideTimer=setTimeout(()=>{
+    document.querySelectorAll('.globe-swap-img').forEach(i=>i.classList.remove('visible'));
+    if(base)base.classList.remove('dimmed');
+    labelBox.classList.remove('visible');
+    activeId=null;
+  },200);
+}
+
+orbs.forEach(orb=>{
+  const id=orb.dataset.play,title=orb.dataset.title,cs=orb.classList.contains('cs');
+  if(!id)return;
+  orb.addEventListener('mouseenter',()=>showSwap(id,title,cs?'Coming Soon':orb.dataset.sub));
+  orb.addEventListener('mouseleave',clearSwap);
+});
+const frame=document.getElementById('globeFrame');
+if(frame){
+  frame.addEventListener('mouseenter',()=>clearTimeout(hideTimer));
+  frame.addEventListener('mouseleave',clearSwap);
+}
 </script>
 </body>
 </html>
