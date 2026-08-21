@@ -1,4 +1,4 @@
-Mission statement: (Role 3 drafts this — one paragraph: what the site argues, and for whom)
+Mission statement: This site argues that AI is genuinely useful in education when it's built for a specific problem rather than deployed as a general convenience — and it makes that case from two different angles, not one. On the teacher side, the site itself is the evidence: it was designed and built by a classroom teacher with no prior web development background, using AI as a collaborator to produce a bespoke tool in roughly 8-12 hours, not the months a "learn to code" path would require. On the student side, the Religion unit shows what disciplined AI use looks like inside a lesson: rather than one blanket rule, it puts AI to three distinct jobs — a foil that exposes what generated language can't do, a research aid that narrows sources without choosing them, and a citation tool that's worthless until checked against a real source — and it separates AI-assisted research from independently authored writing procedurally, in the task's structure, not by asking students to be honest about it. Together, the two cases make one argument with two halves: AI extends what a teacher alone can build, and AI, taught with the right discipline, extends what a student alone can do — demonstrated so far across English and Religion, with the same method intended to extend to History and Drama. It's written for people who evaluate curriculum — department heads, hiring committees, board-level consultants — looking for that method, not a library of lesson plans to copy.
 
 Constraints:
 
@@ -16,6 +16,7 @@ Academic register ("epistemic foil," etc.) translated to plain, checkable descri
 Othello unit's evidentiary claim reframed: demonstrates AI's value for teachers — building a bespoke, personalized site/tool without coding background (~8-12 hrs) — not the same disciplined-student-use structure as Religion.
 Two case studies now read as two facets of one thesis (teacher-side capability + student-side discipline), not one method demonstrated twice — supersedes the earlier "same method" framing.
 Flag: Othello's live AI features would need admin/security review before real classroom deployment — state this honestly if the unit is presented as ready-to-use.
+Mission statement locked (final version above). Build-time claim uses precise figure (8-12 hrs). Subject-range claim scoped to what's actually built (English, Religion), with transfer to History/Drama stated as intent, not fact.
 
 Open Questions: 
 which subject for flagship 2
