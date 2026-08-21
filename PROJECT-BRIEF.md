@@ -11,6 +11,9 @@ Decisions Log:
 Cut Hamlet, Macbeth, Romeo & Juliet, Midsummer, The Tempest stub pages from v1. Reversible — can be revisited later once the multi-subject thesis is established elsewhere on the site.
 Second flagship unit will adapt the user's existing Religion unit from their teaching placement (already adopted as that school's go-to unit for the material) rather than build one from scratch.
 This unit doesn't treat "AI in the classroom" as one problem with one rule. It uses AI for three distinct jobs — an epistemic foil to teach the limits of AI-generated feeling-language, a prompted research tool for narrowing (not choosing) source material, and a citation-finding tool with a mandatory primary-source verification step — and teaches the specific discipline each one requires as actual lesson content (there's a slide titled "Using AI · What Not To Do" showing a lazy prompt failing, immediately followed by the constructed prompt that works). The task design then separates AI-assisted research from independently-authored writing procedurally — assisted work happens in a shared, visible document; drafting happens in a locked-down environment — so academic integrity is architecture, not an honor code. That's a transferable structure for any subject where students research before they write: the "three jobs, three disciplines, structurally separated draft" pattern doesn't depend on Catholic theology at all.
+Othello and Religion unit presented as parallel case studies demonstrating the same design method (not flagship/supporting).
+Academic register ("epistemic foil," etc.) translated to plain, checkable description for unit pages; theoretical framing reserved for an optional, clearly-labeled reflection essay.
+Mission statement: draft complete, not yet locked — pending check against the actual Othello unit content.
 
 Open Questions: 
 which subject for flagship 2
