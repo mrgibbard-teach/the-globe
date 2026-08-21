@@ -7,9 +7,12 @@ No claims about student "disengagement" — frame is "how AI is used effectively
 Multi-subject range matters (English, Religion, History, Drama) — the point is a transferable method, not subject depth alone
 The fact that this site was built with Claude, no prior HTML experience, is itself evidence for the thesis and must be visible on the site
 
-Decisions Log: (dated, one line each, append only)
+Decisions Log: 
+Cut Hamlet, Macbeth, Romeo & Juliet, Midsummer, The Tempest stub pages from v1. Reversible — can be revisited later once the multi-subject thesis is established elsewhere on the site.
+Second flagship unit will adapt the user's existing Religion unit from their teaching placement (already adopted as that school's go-to unit for the material) rather than build one from scratch.
 
-Open Questions: (running list)
+Open Questions: 
+which subject for flagship 2
 
 Current Inventory: (what's live, what's stubbed, what's cut)
 
