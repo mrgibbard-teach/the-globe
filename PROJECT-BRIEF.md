@@ -13,7 +13,9 @@ Second flagship unit will adapt the user's existing Religion unit from their tea
 This unit doesn't treat "AI in the classroom" as one problem with one rule. It uses AI for three distinct jobs — an epistemic foil to teach the limits of AI-generated feeling-language, a prompted research tool for narrowing (not choosing) source material, and a citation-finding tool with a mandatory primary-source verification step — and teaches the specific discipline each one requires as actual lesson content (there's a slide titled "Using AI · What Not To Do" showing a lazy prompt failing, immediately followed by the constructed prompt that works). The task design then separates AI-assisted research from independently-authored writing procedurally — assisted work happens in a shared, visible document; drafting happens in a locked-down environment — so academic integrity is architecture, not an honor code. That's a transferable structure for any subject where students research before they write: the "three jobs, three disciplines, structurally separated draft" pattern doesn't depend on Catholic theology at all.
 Othello and Religion unit presented as parallel case studies demonstrating the same design method (not flagship/supporting).
 Academic register ("epistemic foil," etc.) translated to plain, checkable description for unit pages; theoretical framing reserved for an optional, clearly-labeled reflection essay.
-Mission statement: draft complete, not yet locked — pending check against the actual Othello unit content.
+Othello unit's evidentiary claim reframed: demonstrates AI's value for teachers — building a bespoke, personalized site/tool without coding background (~8-12 hrs) — not the same disciplined-student-use structure as Religion.
+Two case studies now read as two facets of one thesis (teacher-side capability + student-side discipline), not one method demonstrated twice — supersedes the earlier "same method" framing.
+Flag: Othello's live AI features would need admin/security review before real classroom deployment — state this honestly if the unit is presented as ready-to-use.
 
 Open Questions: 
 which subject for flagship 2
